@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class Main {
 
     static Map<Integer, Runnable> actions = new HashMap<>();
-    static Map<String, Boolean> settings = new HashMap<>();
+    static Map<String, Setting> settings = new HashMap<>();
     static String[] wordsLang1 = new String[100];
     static String[] wordsLang2 = new String[100];
     static String[][] dictionary = {wordsLang1, wordsLang2};
@@ -22,7 +22,7 @@ public class Main {
             printMenu();
             int actionCode = requestIntInput("| Executar ação nº: ");
             actions.get(actionCode).run();
-        } while (settings.get("programIsRunning"));
+        } while (Boolean.parseBoolean(settings.get("programIsRunning").getCurrentState()));
     }
 
     public static void registerActions(){
@@ -34,7 +34,9 @@ public class Main {
     }
 
     public static void registerSettings(){
-        settings.put("programIsRunning", true);
+        settings.put("programIsRunning", new Setting("system", 0, "true", "false"));
+        settings.put("Linguagem Primária", new Setting("program","Português"));
+        settings.put("Linguagem Secundária", new Setting("program","Inglês"));
     }
 
     public static void printMenu(){
@@ -92,7 +94,7 @@ public class Main {
         dictionary[1][index] = requestStringInput(String.format("Digite a nova palavra (%s): ", lang2));
     };
 
-    static Runnable Exit = () -> settings.put("programIsRunning", false);
+    static Runnable Exit = () -> settings.get("programIsRunning").change.run();
 
     public static int requestIntInput(String consoleMessage){
         Scanner scanner = new Scanner(System.in);
