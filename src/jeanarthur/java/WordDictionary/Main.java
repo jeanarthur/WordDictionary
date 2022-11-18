@@ -1,12 +1,11 @@
 package jeanarthur.java.WordDictionary;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
-    static Map<Integer, Runnable> actions = new HashMap<>();
+    static List<Action> actions = new ArrayList<>();
+    static Map<Integer, Action> contextActions = new HashMap<>();
     static Map<String, Setting> settings = new HashMap<>();
     static String[] wordsPrimaryLanguage = new String[100];
     static String[] wordsSecondaryLanguage = new String[100];
@@ -14,20 +13,37 @@ public class Main {
 
     public static void main(String[] args) {
         registerActions();
+        setContextActions();
         registerSettings();
         do {
             printMenu();
             int actionCode = requestIntInput("| Executar ação nº: ");
-            actions.get(actionCode).run();
-        } while (Boolean.parseBoolean(settings.get("programIsRunning").getCurrentState()));
+            contextActions.get(actionCode).run();
+        } while (settings.get("programIsRunning").getCurrentState().equals("sim"));
+    }
+
+    public static void setContextActions(){
+        List<Action> actions = getActionsByGroup("mainMenu");
+        int i = 1;
+        for (Action action : actions){
+            contextActions.put(i++, action);
+        }
     }
 
     public static void registerActions(){
-        actions.put(1, Register);
-        actions.put(2, Consult);
-        actions.put(3, Delete);
-        actions.put(4, Edit);
-        actions.put(5, Exit);
+        actions.add(new Action("Cadastrar", "mainMenu", Register));
+        actions.add(new Action("Consultar", "mainMenu", Consult));
+        actions.add(new Action("Excluir", "mainMenu", Delete));
+        actions.add(new Action("Editar", "mainMenu", Edit));
+        actions.add(new Action("Sair", "mainMenu", Exit));
+    }
+
+    private static List<Action> getActionsByGroup(String group){
+        List<Action> groupActions = new ArrayList<>();
+        for (Action action : actions){
+            if (action.getGroup().equals(group)){ groupActions.add(action); }
+        }
+        return groupActions;
     }
 
     public static void registerSettings(){
@@ -50,8 +66,8 @@ public class Main {
 
     static Runnable Register = () -> {
         int freeIndex = getFreeSpaceIndex();
-        dictionary[0][freeIndex] = requestStringInput(String.format("Digite a palavra (%s): ", settings.get("Linguagem Primária").getCurrentState()));
-        dictionary[1][freeIndex] = requestStringInput(String.format("Digite a palavra (%s): ", settings.get("Linguagem Secundária").getCurrentState()));
+        dictionary[0][freeIndex] = requestStringInput(String.format("Digite a palavra (%s): ", settings.get("primaryLanguage").getCurrentState()));
+        dictionary[1][freeIndex] = requestStringInput(String.format("Digite a palavra (%s): ", settings.get("secondaryLanguage").getCurrentState()));
     };
     static Runnable Consult = () -> {
         int index = -1;
@@ -62,8 +78,8 @@ public class Main {
                 break;
             }
         }
-        System.out.printf("| %s: %s\n", settings.get("Linguagem Primária").getCurrentState(), (dictionary[0][index]));
-        System.out.printf("| %s: %s\n", settings.get("Linguagem Secundária").getCurrentState(), (dictionary[1][index]));
+        System.out.printf("| %s: %s\n", settings.get("primaryLanguage").getCurrentState(), (dictionary[0][index]));
+        System.out.printf("| %s: %s\n", settings.get("secondaryLanguage").getCurrentState(), (dictionary[1][index]));
     };
 
     static Runnable Delete = () -> {
@@ -88,7 +104,7 @@ public class Main {
                 break;
             }
         }
-        dictionary[1][index] = requestStringInput(String.format("Digite a nova palavra (%s): ", settings.get("Linguagem Secundária").getCurrentState()));
+        dictionary[1][index] = requestStringInput(String.format("Digite a nova palavra (%s): ", settings.get("secondaryLanguage").getCurrentState()));
     };
 
     static Runnable Exit = () -> settings.get("programIsRunning").change.run();
