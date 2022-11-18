@@ -13,17 +13,17 @@ public class Main {
 
     public static void main(String[] args) {
         registerActions();
-        setContextActions();
         registerSettings();
         do {
+            setContextActions(getActionsByGroup("mainMenu"));
             printMenu();
             int actionCode = requestIntInput("| Executar ação nº: ");
             contextActions.get(actionCode).run();
         } while (settings.get("programIsRunning").getCurrentState().equals("sim"));
     }
 
-    public static void setContextActions(){
-        List<Action> actions = getActionsByGroup("mainMenu");
+    public static void setContextActions(List<Action> actions){
+        contextActions.clear();
         int i = 1;
         for (Action action : actions){
             contextActions.put(i++, action);
