@@ -31,9 +31,9 @@ public class Main {
     }
 
     public static void registerSettings(){
-        settings.put("programIsRunning", new Setting("system", 0, "true", "false"));
-        settings.put("Linguagem Primária", new Setting("program","Português"));
-        settings.put("Linguagem Secundária", new Setting("program","Inglês"));
+        settings.put("programIsRunning", new Setting("Programa em execução","system", 0, "sim", "não"));
+        settings.put("primaryLanguage", new Setting("Linguagem Primária","program","Português"));
+        settings.put("secondaryLanguage", new Setting("Linguagem Secundária","program","Inglês"));
     }
 
     public static void printMenu(){
