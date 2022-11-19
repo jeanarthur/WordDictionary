@@ -31,6 +31,10 @@ public class Menu {
         return this.actions;
     }
 
+    public List<Setting> getSettings(){
+        return this.settings;
+    }
+
     private List<String> composeActionsRepresentations(){
         List<String> actionsRepresentations = new ArrayList<>();
         int i = 1;

@@ -6,6 +6,7 @@ public class Main {
 
     static Map<String, Menu> menus = new HashMap<>();
     static Map<Integer, Action> currentMenuActions = new HashMap<>();
+    static Map<Character, Setting> currentMenuSettings = new HashMap<>();
     static Map<String, Setting> settings = new HashMap<>();
     static String[] wordsPrimaryLanguage = new String[100];
     static String[] wordsSecondaryLanguage = new String[100];
@@ -16,10 +17,17 @@ public class Main {
         registerActionsInMenus();
         registerSettingsInMenus();
         do {
-            setCurrentMenuActions(menus.get("main").getActions());
-            printMenu(menus.get("main"));
-            int actionCode = requestIntInput("| Executar ação nº: ");
-            currentMenuActions.get(actionCode).run();
+            Menu mainMenu = menus.get("main");
+            setCurrentMenuActions(mainMenu.getActions());
+            setCurrentMenuSettings(mainMenu.getSettings());
+            printMenu(mainMenu);
+
+            String actionCode = requestInput("| Executar ação nº: ");
+            if (isNumeric(actionCode)) {
+                currentMenuActions.get(Integer.parseInt(actionCode)).run();
+            } else {
+                currentMenuSettings.get(actionCode.toCharArray()[0]).change();
+            }
         } while (settings.get("programIsRunning").getCurrentState().equals("sim"));
     }
 
@@ -31,6 +39,14 @@ public class Main {
         }
     }
 
+    public static void setCurrentMenuSettings(List<Setting> settings){
+        currentMenuSettings.clear();
+        char i = 'a';
+        for (Setting setting : settings){
+            currentMenuSettings.put(i++, setting);
+        }
+    }
+
     public static void registerMenus(){
         menus.put("main", new Menu("Dicionário de Palavras"));
         menus.put("settings", new Menu("Configurações"));
@@ -38,33 +54,35 @@ public class Main {
 
     public static void registerActionsInMenus(){
         Menu mainMenu = menus.get("main");
-        mainMenu.add(new Action("Cadastrar", Register));
-        mainMenu.add(new Action("Consultar", Consult));
-        mainMenu.add(new Action("Excluir", Delete));
-        mainMenu.add(new Action("Editar", Edit));
-        mainMenu.add(new Action("Sair", Exit));
+        mainMenu.add(new Action("Cadastrar", register));
+        mainMenu.add(new Action("Consultar", consult));
+        mainMenu.add(new Action("Excluir", delete));
+        mainMenu.add(new Action("Editar", edit));
+        mainMenu.add(new Action("Sair", exit));
     }
 
     public static void registerSettingsInMenus(){
-        Menu mainMenu = menus.get("main");
-        mainMenu.add(new Setting("Linguagem Primária","program","Português"));
         settings.put("programIsRunning", new Setting("Programa em execução","system", 0, "sim", "não"));
         settings.put("primaryLanguage", new Setting("Linguagem Primária","program","Português"));
         settings.put("secondaryLanguage", new Setting("Linguagem Secundária","program","Inglês"));
+
+        Menu settingsMenu = menus.get("settings");
+        settingsMenu.add(settings.get("primaryLanguage"));
+        settingsMenu.add(settings.get("secondaryLanguage"));
     }
 
     public static void printMenu(Menu menu){
         menu.print();
     }
 
-    static Runnable Register = () -> {
+    static Runnable register = () -> {
         int freeIndex = getFreeSpaceIndex();
-        dictionary[0][freeIndex] = requestStringInput(String.format("Digite a palavra (%s): ", settings.get("primaryLanguage").getCurrentState()));
-        dictionary[1][freeIndex] = requestStringInput(String.format("Digite a palavra (%s): ", settings.get("secondaryLanguage").getCurrentState()));
+        dictionary[0][freeIndex] = requestInput(String.format("Digite a palavra (%s): ", settings.get("primaryLanguage").getCurrentState()));
+        dictionary[1][freeIndex] = requestInput(String.format("Digite a palavra (%s): ", settings.get("secondaryLanguage").getCurrentState()));
     };
-    static Runnable Consult = () -> {
+    static Runnable consult = () -> {
         int index = -1;
-        String search = requestStringInput("| Consultar: ");
+        String search = requestInput("| Consultar: ");
         for (int i = 0; i < dictionary[0].length; i++){
             if (dictionary[0][i].equals(search)){
                 index = i;
@@ -75,9 +93,9 @@ public class Main {
         System.out.printf("| %s: %s\n", settings.get("secondaryLanguage").getCurrentState(), (dictionary[1][index]));
     };
 
-    static Runnable Delete = () -> {
+    static Runnable delete = () -> {
         int index = -1;
-        String search = requestStringInput("| Excluir: ");
+        String search = requestInput("| Excluir: ");
         for (int i = 0; i < dictionary[0].length; i++){
             if (dictionary[0][i].equals(search)){
                 index = i;
@@ -88,27 +106,22 @@ public class Main {
         dictionary[1][index] = null;
     };
 
-    static Runnable Edit = () -> {
+    static Runnable edit = () -> {
         int index = -1;
-        String search = requestStringInput("| Editar: ");
+        String search = requestInput("| Editar: ");
         for (int i = 0; i < dictionary[0].length; i++){
             if (dictionary[0][i].equals(search)){
                 index = i;
                 break;
             }
         }
-        dictionary[1][index] = requestStringInput(String.format("Digite a nova palavra (%s): ", settings.get("secondaryLanguage").getCurrentState()));
+        dictionary[1][index] = requestInput(String.format("Digite a nova palavra (%s): ", settings.get("secondaryLanguage").getCurrentState()));
     };
 
-    static Runnable Exit = () -> settings.get("programIsRunning").change.run();
 
-    public static int requestIntInput(String consoleMessage){
-        Scanner scanner = new Scanner(System.in);
-        System.out.print(consoleMessage);
-        return scanner.nextInt();
-    }
+    static Runnable exit = () -> settings.get("programIsRunning").change();
 
-    public static String requestStringInput(String consoleMessage){
+    public static String requestInput(String consoleMessage){
         Scanner scanner = new Scanner(System.in);
         System.out.print(consoleMessage);
         return scanner.nextLine();
@@ -123,6 +136,15 @@ public class Main {
             }
         }
         return freeIndex;
+    }
+
+    public static boolean isNumeric(String string){
+        try {
+            Integer.parseInt(string);
+            return true;
+        } catch (NumberFormatException numberFormatException){
+            return false;
+        }
     }
 
 }

@@ -51,7 +51,7 @@ public class Setting {
         }
     }
 
-    public Runnable change = () -> {
+    public void change(){
         if (this.states.length == 1){
             changeState();
         } else {
@@ -65,7 +65,7 @@ public class Setting {
     }
 
     private void changeState(){
-        this.states[0] = Main.requestStringInput("Alterar " + this.states[0] + " para: ");
+        this.states[this.stateValue] = Main.requestInput("Alterar linguagem '" + this.states[0] + "' para: ");
     }
 
     public String getRepresentation() {
