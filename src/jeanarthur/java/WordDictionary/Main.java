@@ -48,58 +48,75 @@ public class Main {
     }
 
     public static void printMenu(Menu menu){
-        menu.start();
+        menu.open();
     }
 
     static Runnable register = () -> {
-        int freeIndex = getFreeSpaceIndex();
-        dictionary[0][freeIndex] = requestInput(String.format("Digite a palavra (%s): ", settings.get("primaryLanguage").getCurrentState()));
-        dictionary[1][freeIndex] = requestInput(String.format("Digite a palavra (%s): ", settings.get("secondaryLanguage").getCurrentState()));
+        try{
+            int freeIndex = getFreeSpaceIndex();
+            dictionary[0][freeIndex] = requestInput(String.format("Digite a palavra (%s): ", settings.get("primaryLanguage").getCurrentState()));
+            dictionary[1][freeIndex] = requestInput(String.format("Digite a palavra (%s): ", settings.get("secondaryLanguage").getCurrentState()));
+        }catch (NullPointerException nullPointerException){
+            throw new RuntimeException("| Não é possível cadastrar.\n| Limite de palavras atingido!");
+        }
     };
     static Runnable consult = () -> {
-        int index = -1;
-        String search = requestInput("| Consultar: ");
-        for (int i = 0; i < dictionary[0].length; i++){
-            if (dictionary[0][i].equals(search)){
-                index = i;
-                break;
+        try {
+            int index = -1;
+            String search = requestInput("| Consultar: ");
+            for (int i = 0; i < dictionary[0].length; i++){
+                if (dictionary[0][i].equals(search)){
+                    index = i;
+                    break;
+                }
             }
+
+            System.out.printf("| %s: %s\n", settings.get("primaryLanguage").getCurrentState(), (dictionary[0][index]));
+            System.out.printf("| %s: %s\n", settings.get("secondaryLanguage").getCurrentState(), (dictionary[1][index]));
+        } catch (NullPointerException nullPointerException){
+            throw new RuntimeException("| Palavra não encontrada!");
         }
-        System.out.printf("| %s: %s\n", settings.get("primaryLanguage").getCurrentState(), (dictionary[0][index]));
-        System.out.printf("| %s: %s\n", settings.get("secondaryLanguage").getCurrentState(), (dictionary[1][index]));
     };
 
     static Runnable delete = () -> {
-        int index = -1;
-        String search = requestInput("| Excluir: ");
-        for (int i = 0; i < dictionary[0].length; i++){
-            if (dictionary[0][i].equals(search)){
-                index = i;
-                break;
+        try{
+            int index = -1;
+            String search = requestInput("| Excluir: ");
+            for (int i = 0; i < dictionary[0].length; i++){
+                if (dictionary[0][i].equals(search)){
+                    index = i;
+                    break;
+                }
             }
+            dictionary[0][index] = null;
+            dictionary[1][index] = null;
+        }catch (NullPointerException nullPointerException){
+            throw new RuntimeException("| Palavra não encontrada!");
         }
-        dictionary[0][index] = null;
-        dictionary[1][index] = null;
     };
 
     static Runnable edit = () -> {
-        int index = -1;
-        String search = requestInput("| Editar: ");
-        for (int i = 0; i < dictionary[0].length; i++){
-            if (dictionary[0][i].equals(search)){
-                index = i;
-                break;
+        try{
+            int index = -1;
+            String search = requestInput("| Editar: ");
+            for (int i = 0; i < dictionary[0].length; i++){
+                if (dictionary[0][i].equals(search)){
+                    index = i;
+                    break;
+                }
             }
+            dictionary[1][index] = requestInput(String.format("Digite a nova palavra (%s): ", settings.get("secondaryLanguage").getCurrentState()));
+        }catch (NullPointerException nullPointerException){
+            throw new RuntimeException("| Palavra não encontrada!");
         }
-        dictionary[1][index] = requestInput(String.format("Digite a nova palavra (%s): ", settings.get("secondaryLanguage").getCurrentState()));
     };
 
     static Runnable configure = () -> {
         Menu.currentMenu = menus.get("settings");
-        Menu.currentMenu.start();
+        Menu.currentMenu.open();
     };
 
-    static Runnable exit = () -> Menu.currentMenu.stop();
+    static Runnable exit = () -> Menu.currentMenu.close();
 
     public static String requestInput(String consoleMessage){
         Scanner scanner = new Scanner(System.in);

@@ -1,9 +1,6 @@
 package jeanarthur.java.WordDictionary;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Menu {
 
@@ -92,25 +89,41 @@ public class Menu {
         return largerLength;
     }
 
-    public void start(){
+    public void open(){
         this.isShowed = true;
+        this.showUntilClose();
+    }
 
+    private void showUntilClose(){
         do {
             this.composeView();
             this.print();
-
-            String actionCode = Main.requestInput("| Executar ação nº: ");
-            if (Main.isNumeric(actionCode)) {
-                this.actions.get(Integer.parseInt(actionCode)).run();
-            } else {
-                this.settings.get(actionCode.toCharArray()[0]).change();
-            }
-            currentMenu = this;
+            this.doInputOutputOperation();
+            this.setCurrentMenu();
         } while (this.isShowed);
-
     }
 
-    public void stop(){
+    private void setCurrentMenu(){
+        currentMenu = this;
+    }
+
+    private void doInputOutputOperation() {
+        String actionCode = Main.requestInput("| Executar ação nº: ");
+        doOperation(actionCode);
+    }
+
+    private void doOperation(String actionCode){
+        try {
+            if (Main.isNumeric(actionCode)) { this.actions.get(Integer.parseInt(actionCode)).run(); }
+            else { this.settings.get(actionCode.toCharArray()[0]).change(); }
+        } catch (NullPointerException nullPointerException){
+            System.out.println("| Operação inválida!\n| Digite uma letra ou \n| número correspondente.");
+        } catch (RuntimeException runtimeException){
+            System.out.println(runtimeException.getMessage());
+        }
+    }
+
+    public void close(){
         this.isShowed = false;
     }
 
