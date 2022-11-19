@@ -5,37 +5,45 @@ import java.util.*;
 public class Main {
 
     static List<Action> actions = new ArrayList<>();
-    static Map<Integer, Action> contextActions = new HashMap<>();
+    static Map<String, Menu> menus = new HashMap<>();
+    static Map<Integer, Action> currentMenuActions = new HashMap<>();
     static Map<String, Setting> settings = new HashMap<>();
     static String[] wordsPrimaryLanguage = new String[100];
     static String[] wordsSecondaryLanguage = new String[100];
     static String[][] dictionary = {wordsPrimaryLanguage, wordsSecondaryLanguage};
 
     public static void main(String[] args) {
-        registerActions();
+        registerMenus();
+        registerActionsInMenus();
         registerSettings();
         do {
-            setContextActions(getActionsByGroup("mainMenu"));
-            printMenu();
+            setCurrentMenuActions(menus.get("main").getActions());
+            printMenu(menus.get("main"));
             int actionCode = requestIntInput("| Executar ação nº: ");
-            contextActions.get(actionCode).run();
+            currentMenuActions.get(actionCode).run();
         } while (settings.get("programIsRunning").getCurrentState().equals("sim"));
     }
 
-    public static void setContextActions(List<Action> actions){
-        contextActions.clear();
+    public static void setCurrentMenuActions(List<Action> actions){
+        currentMenuActions.clear();
         int i = 1;
         for (Action action : actions){
-            contextActions.put(i++, action);
+            currentMenuActions.put(i++, action);
         }
     }
 
-    public static void registerActions(){
-        actions.add(new Action("Cadastrar", "mainMenu", Register));
-        actions.add(new Action("Consultar", "mainMenu", Consult));
-        actions.add(new Action("Excluir", "mainMenu", Delete));
-        actions.add(new Action("Editar", "mainMenu", Edit));
-        actions.add(new Action("Sair", "mainMenu", Exit));
+    public static void registerMenus(){
+        menus.put("main", new Menu("Dicionário de Palavras"));
+        menus.put("settings", new Menu("Configurações"));
+    }
+
+    public static void registerActionsInMenus(){
+        Menu mainMenu = menus.get("main");
+        mainMenu.add(new Action("Cadastrar", "mainMenu", Register));
+        mainMenu.add(new Action("Consultar", "mainMenu", Consult));
+        mainMenu.add(new Action("Excluir", "mainMenu", Delete));
+        mainMenu.add(new Action("Editar", "mainMenu", Edit));
+        mainMenu.add(new Action("Sair", "mainMenu", Exit));
     }
 
     private static List<Action> getActionsByGroup(String group){
@@ -52,8 +60,9 @@ public class Main {
         settings.put("secondaryLanguage", new Setting("Linguagem Secundária","program","Inglês"));
     }
 
-    public static void printMenu(){
-        System.out.println("+========================+");
+    public static void printMenu(Menu menu){
+        menu.print();
+        /*System.out.println("+========================+");
         System.out.println("| Dicionário de Palavras |");
         System.out.println("|------------------------|");
         System.out.println("| 1. Cadastrar           |");
@@ -61,7 +70,7 @@ public class Main {
         System.out.println("| 3. Excluir             |");
         System.out.println("| 4. Editar              |");
         System.out.println("| 5. Sair                |");
-        System.out.println("+========================+");
+        System.out.println("+========================+");*/
     }
 
     static Runnable Register = () -> {

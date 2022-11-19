@@ -1,12 +1,13 @@
 package jeanarthur.java.WordDictionary;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Menu {
 
     private String title;
-    private List<Action> actions;
-    private List<String> actionsDisplayNames;
+    private List<Action> actions = new ArrayList<>();
+    private List<String> actionsDisplayNames = new ArrayList<>();
     private String view;
 
     public Menu(String title, List<Action> actions){
@@ -39,7 +40,7 @@ public class Menu {
         int width = getLargerStringLength();
         String delimiter = String.format("+%s+\n", "=".repeat(width+2));
         String separator = String.format("+%s+\n", "-".repeat(width+2));
-        String format = "| %-" + width + " |\n";
+        String format = "| %-" + width + "s |\n";
 
         view = delimiter;
         view += String.format(format, this.title);
@@ -47,7 +48,7 @@ public class Menu {
         for (String actionDisplayName : this.actionsDisplayNames){
             view += String.format(format, actionDisplayName);
         }
-        view += delimiter;
+        view += delimiter.substring(0, delimiter.length() - 1);
     }
 
     private int getLargerStringLength(){
