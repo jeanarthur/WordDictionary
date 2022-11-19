@@ -16,6 +16,18 @@ public class Menu {
         this.composeView();
     }
 
+    public Menu(String title){
+        this.title = title;
+    }
+
+    public void add(Action action){
+        this.actions.add(action);
+    }
+
+    public List<Action> getActions(){
+        return this.actions;
+    }
+
     private void composeActionDisplayNames(){
         int i = 1;
         for (Action action : this.actions){
@@ -26,9 +38,13 @@ public class Menu {
     private void composeView(){
         int width = getLargerStringLength();
         String delimiter = String.format("+%s+\n", "=".repeat(width+2));
+        String separator = String.format("+%s+\n", "-".repeat(width+2));
+        String format = "| %-" + width + " |\n";
+
         view = delimiter;
+        view += String.format(format, this.title);
+        view += separator;
         for (String actionDisplayName : this.actionsDisplayNames){
-            String format = "| %-" + width + " |\n";
             view += String.format(format, actionDisplayName);
         }
         view += delimiter;
@@ -46,6 +62,10 @@ public class Menu {
     }
 
     public void print(){
+        if (view == null){
+            composeActionDisplayNames();
+            composeView();
+        }
         System.out.println(this.view);
     }
 
