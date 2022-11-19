@@ -4,7 +4,6 @@ import java.util.*;
 
 public class Main {
 
-    static List<Action> actions = new ArrayList<>();
     static Map<String, Menu> menus = new HashMap<>();
     static Map<Integer, Action> currentMenuActions = new HashMap<>();
     static Map<String, Setting> settings = new HashMap<>();
@@ -39,19 +38,11 @@ public class Main {
 
     public static void registerActionsInMenus(){
         Menu mainMenu = menus.get("main");
-        mainMenu.add(new Action("Cadastrar", "mainMenu", Register));
-        mainMenu.add(new Action("Consultar", "mainMenu", Consult));
-        mainMenu.add(new Action("Excluir", "mainMenu", Delete));
-        mainMenu.add(new Action("Editar", "mainMenu", Edit));
-        mainMenu.add(new Action("Sair", "mainMenu", Exit));
-    }
-
-    private static List<Action> getActionsByGroup(String group){
-        List<Action> groupActions = new ArrayList<>();
-        for (Action action : actions){
-            if (action.getGroup().equals(group)){ groupActions.add(action); }
-        }
-        return groupActions;
+        mainMenu.add(new Action("Cadastrar", Register));
+        mainMenu.add(new Action("Consultar", Consult));
+        mainMenu.add(new Action("Excluir", Delete));
+        mainMenu.add(new Action("Editar", Edit));
+        mainMenu.add(new Action("Sair", Exit));
     }
 
     public static void registerSettings(){
@@ -62,15 +53,6 @@ public class Main {
 
     public static void printMenu(Menu menu){
         menu.print();
-        /*System.out.println("+========================+");
-        System.out.println("| Dicionário de Palavras |");
-        System.out.println("|------------------------|");
-        System.out.println("| 1. Cadastrar           |");
-        System.out.println("| 2. Consultar           |");
-        System.out.println("| 3. Excluir             |");
-        System.out.println("| 4. Editar              |");
-        System.out.println("| 5. Sair                |");
-        System.out.println("+========================+");*/
     }
 
     static Runnable Register = () -> {

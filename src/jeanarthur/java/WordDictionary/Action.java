@@ -4,11 +4,9 @@ public class Action {
 
     private String displayName;
     private Runnable action;
-    private String group = "standard";
 
     public Action(String displayName, String group, Runnable action){
         this.displayName = displayName;
-        this.group = group;
         this.action = action;
     }
 
@@ -23,10 +21,6 @@ public class Action {
 
     public String getDisplayName(){
         return this.displayName;
-    }
-
-    public String getGroup(){
-        return this.group;
     }
 
 }
