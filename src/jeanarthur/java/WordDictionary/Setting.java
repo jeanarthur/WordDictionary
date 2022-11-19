@@ -11,22 +11,26 @@ public class Setting {
     private String[] states;
 
     public Setting(String displayName, String... states){
+        this.displayName = displayName;
         this.states = Objects.requireNonNullElseGet(states, () -> new String[]{"true", "false"});
         this.setRepresentation();
     }
 
     public Setting(String displayName, String state){
+        this.displayName = displayName;
         this.states = new String[]{state};
         this.setRepresentation();
     }
 
     public Setting(String displayName, int startStateValue, String... states){
+        this.displayName = displayName;
         this.states = Objects.requireNonNullElseGet(states, () -> new String[]{"true", "false"});
         this.stateValue = startStateValue;
         this.setRepresentation();
     }
 
     public Setting(String displayName, String group, int startStateValue, String... states){
+        this.displayName = displayName;
         this.states = Objects.requireNonNullElseGet(states, () -> new String[]{"true", "false"});
         this.stateValue = startStateValue;
         this.group = group;
@@ -34,6 +38,7 @@ public class Setting {
     }
 
     public Setting(String displayName, String group, String state){
+        this.displayName = displayName;
         this.states = new String[]{state};
         this.group = group;
         this.setRepresentation();
@@ -74,6 +79,8 @@ public class Setting {
     public String getGroup(){
         return this.group;
     }
+
+    public String getDisplayName(){ return this.displayName; }
 
     public String getCurrentState(){
         return this.states[this.stateValue];

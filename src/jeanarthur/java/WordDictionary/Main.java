@@ -14,7 +14,7 @@ public class Main {
     public static void main(String[] args) {
         registerMenus();
         registerActionsInMenus();
-        registerSettings();
+        registerSettingsInMenus();
         do {
             setCurrentMenuActions(menus.get("main").getActions());
             printMenu(menus.get("main"));
@@ -45,7 +45,9 @@ public class Main {
         mainMenu.add(new Action("Sair", Exit));
     }
 
-    public static void registerSettings(){
+    public static void registerSettingsInMenus(){
+        Menu mainMenu = menus.get("main");
+        mainMenu.add(new Setting("Linguagem Primária","program","Português"));
         settings.put("programIsRunning", new Setting("Programa em execução","system", 0, "sim", "não"));
         settings.put("primaryLanguage", new Setting("Linguagem Primária","program","Português"));
         settings.put("secondaryLanguage", new Setting("Linguagem Secundária","program","Inglês"));
