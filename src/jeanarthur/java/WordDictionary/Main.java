@@ -5,8 +5,6 @@ import java.util.*;
 public class Main {
 
     static Map<String, Menu> menus = new HashMap<>();
-    static Map<Integer, Action> currentMenuActions = new HashMap<>();
-    static Map<Character, Setting> currentMenuSettings = new HashMap<>();
     static Map<String, Setting> settings = new HashMap<>();
     static String[] wordsPrimaryLanguage = new String[100];
     static String[] wordsSecondaryLanguage = new String[100];
@@ -16,35 +14,8 @@ public class Main {
         registerMenus();
         registerActionsInMenus();
         registerSettingsInMenus();
-        do {
-            Menu mainMenu = menus.get("main");
-            setCurrentMenuActions(mainMenu.getActions());
-            setCurrentMenuSettings(mainMenu.getSettings());
-            printMenu(mainMenu);
-
-            String actionCode = requestInput("| Executar ação nº: ");
-            if (isNumeric(actionCode)) {
-                currentMenuActions.get(Integer.parseInt(actionCode)).run();
-            } else {
-                currentMenuSettings.get(actionCode.toCharArray()[0]).change();
-            }
-        } while (settings.get("programIsRunning").getCurrentState().equals("sim"));
-    }
-
-    public static void setCurrentMenuActions(List<Action> actions){
-        currentMenuActions.clear();
-        int i = 1;
-        for (Action action : actions){
-            currentMenuActions.put(i++, action);
-        }
-    }
-
-    public static void setCurrentMenuSettings(List<Setting> settings){
-        currentMenuSettings.clear();
-        char i = 'a';
-        for (Setting setting : settings){
-            currentMenuSettings.put(i++, setting);
-        }
+        Menu.currentMenu = menus.get("main");
+        printMenu(Menu.currentMenu);
     }
 
     public static void registerMenus(){
@@ -58,7 +29,12 @@ public class Main {
         mainMenu.add(new Action("Consultar", consult));
         mainMenu.add(new Action("Excluir", delete));
         mainMenu.add(new Action("Editar", edit));
+        mainMenu.add(new Action("Configurar", configure));
         mainMenu.add(new Action("Sair", exit));
+
+        Menu settingsMenu = menus.get("settings");
+        settingsMenu.add(new Action("Voltar", exit));
+
     }
 
     public static void registerSettingsInMenus(){
@@ -72,7 +48,7 @@ public class Main {
     }
 
     public static void printMenu(Menu menu){
-        menu.print();
+        menu.start();
     }
 
     static Runnable register = () -> {
@@ -118,8 +94,12 @@ public class Main {
         dictionary[1][index] = requestInput(String.format("Digite a nova palavra (%s): ", settings.get("secondaryLanguage").getCurrentState()));
     };
 
+    static Runnable configure = () -> {
+        Menu.currentMenu = menus.get("settings");
+        Menu.currentMenu.start();
+    };
 
-    static Runnable exit = () -> settings.get("programIsRunning").change();
+    static Runnable exit = () -> Menu.currentMenu.stop();
 
     public static String requestInput(String consoleMessage){
         Scanner scanner = new Scanner(System.in);

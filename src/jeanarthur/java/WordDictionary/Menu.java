@@ -1,44 +1,38 @@
 package jeanarthur.java.WordDictionary;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Menu {
 
+    public static Menu currentMenu;
     private final String title;
-    private List<Action> actions = new ArrayList<>();
-    private List<Setting> settings = new ArrayList<>();
+    private Map<Integer, Action> actions = new HashMap<>();
+    private Map<Character, Setting> settings = new HashMap<>();
     private String view;
-
-    public Menu(String title, List<Action> actions){
-        this.title = title;
-        this.actions = actions;
-        this.composeView();
-    }
+    private boolean isShowed = false;
 
     public Menu(String title){
         this.title = title;
     }
 
     public void add(Action action){
-        this.actions.add(action);
+        this.actions.put(this.actions.size() + 1, action);
     }
     public void add(Setting setting){
-        this.settings.add(setting);
+        this.settings.put(convertIntegerInChar(this.settings.size() + 1), setting);
     }
 
-    public List<Action> getActions(){
-        return this.actions;
-    }
-
-    public List<Setting> getSettings(){
-        return this.settings;
+    private Character convertIntegerInChar(int i){
+        return i > 0 && i < 27 ? (char)(i + 'a' - 1) : null;
     }
 
     private List<String> composeActionsRepresentations(){
         List<String> actionsRepresentations = new ArrayList<>();
         int i = 1;
-        for (Action action : this.actions){
+        for (Action action : this.actions.values()){
             actionsRepresentations.add(String.format("%d. %s", i++, action.getDisplayName()));
         }
         return actionsRepresentations;
@@ -47,7 +41,7 @@ public class Menu {
     private List<String> composeSettingsRepresentations(){
         List<String> settingsRepresentations = new ArrayList<>();
         char i = 'a';
-        for (Setting setting : this.settings){
+        for (Setting setting : this.settings.values()){
             settingsRepresentations.add(String.format("%c. %s", i++, setting.getRepresentation()));
         }
         return settingsRepresentations;
@@ -98,10 +92,29 @@ public class Menu {
         return largerLength;
     }
 
-    public void print(){
-        if (this.view == null || this.settings.size() > 0){
-            composeView();
-        }
+    public void start(){
+        this.isShowed = true;
+
+        do {
+            this.composeView();
+            this.print();
+
+            String actionCode = Main.requestInput("| Executar ação nº: ");
+            if (Main.isNumeric(actionCode)) {
+                this.actions.get(Integer.parseInt(actionCode)).run();
+            } else {
+                this.settings.get(actionCode.toCharArray()[0]).change();
+            }
+            currentMenu = this;
+        } while (this.isShowed);
+
+    }
+
+    public void stop(){
+        this.isShowed = false;
+    }
+
+    private void print(){
         System.out.println(this.view);
     }
 
