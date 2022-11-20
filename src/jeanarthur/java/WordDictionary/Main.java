@@ -27,8 +27,8 @@ public class Main {
         Menu mainMenu = menus.get("main");
         mainMenu.add(new Action("Cadastrar", register));
         mainMenu.add(new Action("Consultar", consult));
-        mainMenu.add(new Action("Excluir", delete));
         mainMenu.add(new Action("Editar", edit));
+        mainMenu.add(new Action("Excluir", delete));
         mainMenu.add(new Action("Configurar", configure));
         mainMenu.add(new Action("Sair", exit));
 
@@ -51,70 +51,10 @@ public class Main {
         menu.open();
     }
 
-    static Runnable register = () -> {
-        int freeIndex = getFreeSpaceIndex();
-        try{
-            if (freeIndex == -1) { throw new RuntimeException("| Não é possível cadastrar.\n| Limite de 100 palavras\n| atingido!"); }
-            dictionary[0][freeIndex] = requestNonDuplicatedInputIn(dictionary[0], String.format("Digite a palavra (%s): ", settings.get("primaryLanguage").getCurrentState()));
-            dictionary[1][freeIndex] = requestNonDuplicatedInputIn(dictionary[1], String.format("Digite a palavra (%s): ", settings.get("secondaryLanguage").getCurrentState()));
-        } catch (RuntimeException runtimeException){
-            if (freeIndex != -1) {
-                dictionary[0][freeIndex] = null;
-                dictionary[1][freeIndex] = null;
-            }
-            throw new RuntimeException(runtimeException.getMessage());
-        }
-    };
-    static Runnable consult = () -> {
-        try {
-            int index = -1;
-            String search = requestInput("| Consultar: ");
-            for (int i = 0; i < dictionary[0].length; i++){
-                if (dictionary[0][i].equals(search)){
-                    index = i;
-                    break;
-                }
-            }
-
-            System.out.printf("| %s: %s\n", settings.get("primaryLanguage").getCurrentState(), (dictionary[0][index]));
-            System.out.printf("| %s: %s\n", settings.get("secondaryLanguage").getCurrentState(), (dictionary[1][index]));
-        } catch (NullPointerException nullPointerException){
-            throw new RuntimeException("| Palavra não encontrada!");
-        }
-    };
-
-    static Runnable delete = () -> {
-        try{
-            int index = -1;
-            String search = requestInput("| Excluir: ");
-            for (int i = 0; i < dictionary[0].length; i++){
-                if (dictionary[0][i].equals(search)){
-                    index = i;
-                    break;
-                }
-            }
-            dictionary[0][index] = null;
-            dictionary[1][index] = null;
-        }catch (NullPointerException nullPointerException){
-            throw new RuntimeException("| Palavra não encontrada!");
-        }
-    };
-
-    static Runnable edit = () -> {
-        try{
-            int index = -1;
-            String search = requestInput("| Editar: ");
-            for (int i = 0; i < dictionary[0].length; i++){
-                if (dictionary[0][i].equals(search)){
-                    index = i;
-                    break;
-                }
-            }
-            dictionary[1][index] = requestNonDuplicatedInputIn(dictionary[1], String.format("| Alterar '%s'(%s) para: ", dictionary[1][index], settings.get("secondaryLanguage").getCurrentState()));
-        }catch (NullPointerException nullPointerException){
-            throw new RuntimeException("| Palavra não encontrada!");
-        }
-    };
+    static Runnable register = Dictionary::register;
+    static Runnable consult = Dictionary::consult;
+    static Runnable edit = Dictionary::edit;
+    static Runnable delete = Dictionary::delete;
 
     static Runnable configure = () -> {
         Menu.currentMenu = menus.get("settings");
