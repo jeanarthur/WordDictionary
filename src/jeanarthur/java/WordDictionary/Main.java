@@ -6,8 +6,8 @@ public class Main {
 
     static Map<String, Menu> menus = new HashMap<>();
     static Map<String, Setting> settings = new HashMap<>();
-    static String[] wordsPrimaryLanguage = new String[100];
-    static String[] wordsSecondaryLanguage = new String[100];
+    static String[] wordsPrimaryLanguage = new String[1];
+    static String[] wordsSecondaryLanguage = new String[1];
     static String[][] dictionary = {wordsPrimaryLanguage, wordsSecondaryLanguage};
 
     public static void main(String[] args) {
@@ -52,12 +52,17 @@ public class Main {
     }
 
     static Runnable register = () -> {
+        int freeIndex = getFreeSpaceIndex();
         try{
-            int freeIndex = getFreeSpaceIndex();
-            dictionary[0][freeIndex] = requestInput(String.format("Digite a palavra (%s): ", settings.get("primaryLanguage").getCurrentState()));
-            dictionary[1][freeIndex] = requestInput(String.format("Digite a palavra (%s): ", settings.get("secondaryLanguage").getCurrentState()));
-        }catch (NullPointerException nullPointerException){
-            throw new RuntimeException("| Não é possível cadastrar.\n| Limite de palavras atingido!");
+            if (freeIndex == -1) { throw new RuntimeException("| Não é possível cadastrar.\n| Limite de 100 palavras\n| atingido!"); }
+            dictionary[0][freeIndex] = requestNonDuplicatedInputIn(dictionary[0], String.format("Digite a palavra (%s): ", settings.get("primaryLanguage").getCurrentState()));
+            dictionary[1][freeIndex] = requestNonDuplicatedInputIn(dictionary[1], String.format("Digite a palavra (%s): ", settings.get("secondaryLanguage").getCurrentState()));
+        } catch (RuntimeException runtimeException){
+            if (freeIndex != -1) {
+                dictionary[0][freeIndex] = null;
+                dictionary[1][freeIndex] = null;
+            }
+            throw new RuntimeException(runtimeException.getMessage());
         }
     };
     static Runnable consult = () -> {
@@ -105,7 +110,7 @@ public class Main {
                     break;
                 }
             }
-            dictionary[1][index] = requestInput(String.format("Digite a nova palavra (%s): ", settings.get("secondaryLanguage").getCurrentState()));
+            dictionary[1][index] = requestNonDuplicatedInputIn(dictionary[1], String.format("| Alterar '%s'(%s) para: ", dictionary[1][index], settings.get("secondaryLanguage").getCurrentState()));
         }catch (NullPointerException nullPointerException){
             throw new RuntimeException("| Palavra não encontrada!");
         }
@@ -117,6 +122,14 @@ public class Main {
     };
 
     static Runnable exit = () -> Menu.currentMenu.close();
+
+    public static String requestNonDuplicatedInputIn(String[] stringArray, String consoleMessage){
+        String input = requestInput(consoleMessage);
+        boolean isDuplicated = Arrays.toString(stringArray).contains(" " + input) ||
+                               Arrays.toString(stringArray).contains("[" + input);
+        if (isDuplicated) { throw new RuntimeException("| Não é possível cadastrar!\n| Palavra já foi registrada\n| para esse idioma."); }
+        return input;
+    }
 
     public static String requestInput(String consoleMessage){
         Scanner scanner = new Scanner(System.in);
