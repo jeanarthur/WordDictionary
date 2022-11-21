@@ -22,6 +22,11 @@ public class Menu {
         this.settings.put(convertIntegerInChar(this.settings.size() + 1), setting);
     }
 
+    public void clear() {
+        this.actions.clear();
+        this.settings.clear();
+    }
+
     private Character convertIntegerInChar(int i){
         return i > 0 && i < 27 ? (char)(i + 'a' - 1) : null;
     }

@@ -46,9 +46,14 @@ public class Setting {
 
     private void setRepresentation(){
         this.representation = this.displayName + ": ";
-        for (int i = 0; i < this.states.length; i++){
-            this.representation += (i == this.stateValue) ? "[X]" + this.states[i] : "[ ]" + this.states[i];
+        if (this.states.length == 1){
+            this.representation += this.states[0];
+        } else {
+            for (int i = 0; i < this.states.length; i++){
+                this.representation += (i == this.stateValue) ? "[X]" + this.states[i] : "[ ]" + this.states[i];
+            }
         }
+
     }
 
     public void change(){
@@ -58,7 +63,7 @@ public class Setting {
             changeToNext();
         }
         this.setRepresentation();
-    };
+    }
 
     private void changeToNext(){
         this.stateValue = (this.stateValue + 1 > this.states.length - 1) ? 0 : this.stateValue + 1;

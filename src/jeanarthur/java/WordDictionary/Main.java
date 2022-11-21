@@ -6,9 +6,12 @@ public class Main {
 
     static Map<String, Menu> menus = new HashMap<>();
     static Map<String, Setting> settings = new HashMap<>();
-    static String[] wordsPrimaryLanguage = new String[1];
-    static String[] wordsSecondaryLanguage = new String[1];
+    static String[] wordsPrimaryLanguage = new String[100];
+    static String[] wordsSecondaryLanguage = new String[100];
     static String[][] dictionary = {wordsPrimaryLanguage, wordsSecondaryLanguage};
+
+    static String[] registeredWords;
+    static int wordListIndex = 0;
 
     public static void main(String[] args) {
         registerMenus();
@@ -21,6 +24,7 @@ public class Main {
     public static void registerMenus(){
         menus.put("main", new Menu("Dicionário de Palavras"));
         menus.put("settings", new Menu("Configurações"));
+        menus.put("wordList", new Menu("Lista de palavras"));
     }
 
     public static void registerActionsInMenus(){
@@ -30,6 +34,7 @@ public class Main {
         mainMenu.add(new Action("Editar", edit));
         mainMenu.add(new Action("Excluir", delete));
         mainMenu.add(new Action("Configurar", configure));
+        mainMenu.add(new Action("Listar", list));
         mainMenu.add(new Action("Sair", exit));
 
         Menu settingsMenu = menus.get("settings");
@@ -59,6 +64,22 @@ public class Main {
     static Runnable configure = () -> {
         Menu.currentMenu = menus.get("settings");
         Menu.currentMenu.open();
+    };
+
+    static Runnable consultFromList = () -> {
+
+    };
+
+    static Runnable list =() -> {
+        registeredWords = getNotNullValues(dictionary[0]);
+        Menu wordList = menus.get("wordList");
+        wordList.clear();
+        int wordCount = 0;
+        for (int i = wordListIndex; i < registeredWords.length; i++){
+            wordList.add(new Action(registeredWords[i], consult));
+            if (++wordCount == 5){ break; }
+        }
+        wordList.open();
     };
 
     static Runnable exit = () -> Menu.currentMenu.close();
@@ -95,6 +116,19 @@ public class Main {
         } catch (NumberFormatException numberFormatException){
             return false;
         }
+    }
+
+    public static String[] getNotNullValues(String[] array){
+        String[] notNullValues = new String[array.length];
+        int i = 0;
+
+        for (String string : array){
+            if (string != null){
+                notNullValues[i++] = string;
+            }
+        }
+
+        return Arrays.copyOfRange(notNullValues, 0, i);
     }
 
 }
