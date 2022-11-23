@@ -17,6 +17,21 @@ public class Dictionary {
         }
     }
 
+    public static void register(String word1, String word2){
+        int freeIndex = Main.getFreeSpaceIndex();
+        try{
+            if (freeIndex == -1) { throw new RuntimeException("| Não é possível cadastrar.\n| Limite de 100 palavras\n| atingido!"); }
+            Main.dictionary[0][freeIndex] = word1;
+            Main.dictionary[1][freeIndex] = word2;
+        } catch (RuntimeException runtimeException){
+            if (freeIndex != -1) {
+                Main.dictionary[0][freeIndex] = null;
+                Main.dictionary[1][freeIndex] = null;
+            }
+            throw new RuntimeException(runtimeException.getMessage());
+        }
+    }
+
     public static void consult(){
         try {
             String word = Main.requestInput("| Consultar: ");

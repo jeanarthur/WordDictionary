@@ -1,6 +1,7 @@
 package jeanarthur.java.WordDictionary;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class Main {
 
@@ -14,11 +15,20 @@ public class Main {
     static int wordListIndex = 0;
 
     public static void main(String[] args) {
+        registerTestWords();
         registerMenus();
         registerActionsInMenus();
         registerSettingsInMenus();
         Menu.currentMenu = menus.get("main");
         printMenu(Menu.currentMenu);
+    }
+
+    public static void registerTestWords(){
+        Dictionary.register("casa", "home");
+        Dictionary.register("gelo", "ice");
+        Dictionary.register("sala", "room");
+        Dictionary.register("fazer", "do");
+        Dictionary.register("limpar", "clear");
     }
 
     public static void registerMenus(){
@@ -66,22 +76,38 @@ public class Main {
         Menu.currentMenu.open();
     };
 
-    static Runnable consultFromList = () -> {
-
+    static Consumer<String> consultFromList = (String word) -> {
+        Dictionary.consult(word);
+        updateList();
     };
 
     static Runnable list =() -> {
+        updateList();
+        menus.get("wordList").open();
+    };
+
+    static void updateList(){
         registeredWords = getNotNullValues(dictionary[0]);
         Menu wordList = menus.get("wordList");
         wordList.clear();
         int wordCount = 0;
         for (int i = wordListIndex; i < registeredWords.length; i++){
-            wordList.add(new Action(registeredWords[i], consult));
+            wordList.add(new Action(registeredWords[i], consultFromList, registeredWords[i]));
             if (++wordCount == 5){ break; }
         }
-        wordList.open();
-    };
+        if (wordListIndex > 0){ wordList.add(new Action("[ Anterior ]", previousInList)); }
+        if (wordListIndex + 5 < registeredWords.length){ wordList.add(new Action("[ Próximo ]", nextInList)); }
+        wordList.add(new Action("[ Voltar ]", exit));
+    }
 
+    static Runnable nextInList = () -> {
+        wordListIndex += (wordListIndex + 5 < registeredWords.length) ? 5 : registeredWords.length - wordListIndex;
+        updateList();
+    };
+    static Runnable previousInList = () -> {
+        wordListIndex -= 5;
+        updateList();
+    };
     static Runnable exit = () -> Menu.currentMenu.close();
 
     public static String requestNonDuplicatedInputIn(String[] stringArray, String consoleMessage){

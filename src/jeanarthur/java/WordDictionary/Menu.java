@@ -101,10 +101,10 @@ public class Menu {
 
     private void showUntilClose(){
         do {
+            this.setCurrentMenu();
             this.composeView();
             this.print();
             this.doInputOutputOperation();
-            this.setCurrentMenu();
         } while (this.isShowed);
     }
 
