@@ -6,7 +6,7 @@ public class Menu {
 
     public static Menu currentMenu;
     private final String title;
-    private Map<Integer, Action> actions = new HashMap<>();
+    private Map<String, Action> actions = new HashMap<>();
     private Map<Character, Setting> settings = new HashMap<>();
     private String view;
     private boolean isShowed = false;
@@ -16,7 +16,7 @@ public class Menu {
     }
 
     public void add(Action action){
-        this.actions.put(this.actions.size() + 1, action);
+        this.actions.put(Integer.toString(this.actions.size() + 1), action);
     }
     public void add(Setting setting){
         this.settings.put(convertIntegerInChar(this.settings.size() + 1), setting);
@@ -119,7 +119,7 @@ public class Menu {
 
     private void doOperation(String actionCode){
         try {
-            if (Main.isNumeric(actionCode)) { this.actions.get(Integer.parseInt(actionCode)).run(); }
+            if (Main.isNumeric(actionCode)) { this.actions.get(actionCode).run(); }
             else { this.settings.get(actionCode.toCharArray()[0]).change(); }
         } catch (NullPointerException nullPointerException){
             System.out.println("| Operação inválida!\n| Digite uma letra ou \n| número correspondente.");
