@@ -8,6 +8,7 @@ public class Menu {
     private final String title;
     private Map<String, Action> actions = new HashMap<>();
     private Map<String, Setting> settings = new HashMap<>();
+    private List<String> componentKeys = new ArrayList<>();
     private String view;
     private boolean isShowed = false;
 
@@ -16,17 +17,23 @@ public class Menu {
     }
 
     public void add(Action action){
-        this.actions.put(Integer.toString(this.actions.size() + 1), action);
+        String key = Integer.toString(this.actions.size() + 1);
+        this.actions.put(key, action);
+        this.componentKeys.add(key);
     }
     public void add(Action action, String actionCode){
         this.actions.put(actionCode, action);
+        this.componentKeys.add(actionCode);
     }
 
     public void add(Setting setting){
+        String key = Integer.toString(this.settings.size() + 1);
         this.settings.put(convertIntInAlphabetLetter(this.settings.size() + 1), setting);
+        this.componentKeys.add(key);
     }
     public void add(Setting setting, String actionCode){
         this.settings.put(actionCode, setting);
+        this.componentKeys.add(actionCode);
     }
 
     public void clear() {
@@ -36,6 +43,24 @@ public class Menu {
 
     private String convertIntInAlphabetLetter(int i){
         return i > 0 && i < 27 ? String.format("%c", (char)(i + 'a' - 1)) : null;
+    }
+
+    private List<List<String>> composeRepresentations(){
+        List<String> actionsRepresentations = new ArrayList<>();
+        List<String> settingsRepresentations = new ArrayList<>();
+        Set<String> actionKeys = this.actions.keySet();
+        for (String key : this.componentKeys){
+            if (actionKeys.contains(key)){
+                actionsRepresentations.add(String.format("%s. %s", key, this.actions.get(key).getDisplayName()));
+            } else {
+                settingsRepresentations.add(String.format("%s. %s", key, this.settings.get(key).getDisplayName()));
+            }
+        }
+        List<List<String>> representations = new ArrayList<>();
+        representations.add(actionsRepresentations);
+        representations.add(settingsRepresentations);
+
+        return representations;
     }
 
     private List<String> composeActionsRepresentations(){
@@ -59,8 +84,9 @@ public class Menu {
     }
 
     private void composeView(){
-        List<String> actionsRepresentations = composeActionsRepresentations();
-        List<String> settingsRepresentations = composeSettingsRepresentations();
+        List<List<String>> representations = composeRepresentations();
+        List<String> actionsRepresentations = representations.get(0);
+        List<String> settingsRepresentations = representations.get(1);
         int width = getLargerStringLength(actionsRepresentations, settingsRepresentations);
         int actionsAmount = actionsRepresentations.size();
         int settingsAmount = settingsRepresentations.size();
