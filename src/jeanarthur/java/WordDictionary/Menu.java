@@ -61,7 +61,7 @@ public class Menu {
             if (actionKeys.contains(key)){
                 actionsRepresentations.add(String.format("%s. %s", key, this.actions.get(key).getDisplayName()));
             } else {
-                settingsRepresentations.add(String.format("%s. %s", key, this.settings.get(key).getDisplayName()));
+                settingsRepresentations.add(String.format("%s. %s", key, this.settings.get(key).getRepresentation()));
             }
         }
         List<List<String>> representations = new ArrayList<>();
