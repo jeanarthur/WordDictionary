@@ -39,6 +39,8 @@ public class Dictionary {
             System.out.printf("| %s: %s\n", Main.settings.get("primaryLanguage").getCurrentState(), (Main.dictionary[0][index]));
             System.out.printf("| %s: %s\n", Main.settings.get("secondaryLanguage").getCurrentState(), (Main.dictionary[1][index]));
         } catch (NullPointerException nullPointerException){
+            throw Exception.generic(nullPointerException.getMessage());
+        } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){
             throw Exception.wordNotFound;
         }
     }
@@ -49,6 +51,8 @@ public class Dictionary {
             System.out.printf("| %s: %s\n", Main.settings.get("primaryLanguage").getCurrentState(), (Main.dictionary[0][index]));
             System.out.printf("| %s: %s\n", Main.settings.get("secondaryLanguage").getCurrentState(), (Main.dictionary[1][index]));
         } catch (NullPointerException nullPointerException){
+            throw Exception.generic(nullPointerException.getMessage());
+        } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){
             throw Exception.wordNotFound;
         }
     }
@@ -59,7 +63,9 @@ public class Dictionary {
             int index = getIndexOf(word);
             Main.dictionary[0][index] = null;
             Main.dictionary[1][index] = null;
-        }catch (NullPointerException nullPointerException){
+        } catch (NullPointerException nullPointerException){
+            throw Exception.generic(nullPointerException.getMessage());
+        } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){
             throw Exception.wordNotFound;
         }
     }
@@ -69,7 +75,9 @@ public class Dictionary {
             int index = getIndexOf(word);
             Main.dictionary[0][index] = null;
             Main.dictionary[1][index] = null;
-        }catch (NullPointerException nullPointerException){
+        } catch (NullPointerException nullPointerException){
+            throw Exception.generic(nullPointerException.getMessage());
+        } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){
             throw Exception.wordNotFound;
         }
     }
@@ -80,6 +88,8 @@ public class Dictionary {
             int index = getIndexOf(word);
             Main.dictionary[1][index] = Main.requestNonDuplicatedInputIn(Main.dictionary[1], String.format("| Alterar '%s'(%s) para: ", Main.dictionary[1][index], Main.settings.get("secondaryLanguage").getCurrentState()));
         } catch (NullPointerException nullPointerException){
+            throw Exception.generic(nullPointerException.getMessage());
+        } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){
             throw Exception.wordNotFound;
         }
     }
@@ -89,6 +99,8 @@ public class Dictionary {
             int index = getIndexOf(word);
             Main.dictionary[1][index] = Main.requestNonDuplicatedInputIn(Main.dictionary[1], String.format("| Alterar '%s'(%s) para: ", Main.dictionary[1][index], Main.settings.get("secondaryLanguage").getCurrentState()));
         } catch (NullPointerException nullPointerException){
+            throw Exception.generic(nullPointerException.getMessage());
+        } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){
             throw Exception.wordNotFound;
         }
     }

@@ -168,7 +168,7 @@ public class Menu {
             if (actionKeys.contains(actionCode)) { this.actions.get(actionCode).run(); }
             else { this.settings.get(actionCode).change(); }
         } catch (NullPointerException nullPointerException){
-            System.out.println("| Operação inválida!\n| Digite uma letra ou \n| número correspondente.");
+            System.out.println(Exception.invalidOperationCode.getMessage());
         } catch (RuntimeException runtimeException){
             System.out.println(runtimeException.getMessage());
         }
