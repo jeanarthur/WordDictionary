@@ -7,7 +7,7 @@ public class Menu {
     public static Menu currentMenu;
     private final String title;
     private Map<String, Action> actions = new HashMap<>();
-    private Map<Character, Setting> settings = new HashMap<>();
+    private Map<String, Setting> settings = new HashMap<>();
     private String view;
     private boolean isShowed = false;
 
@@ -18,8 +18,15 @@ public class Menu {
     public void add(Action action){
         this.actions.put(Integer.toString(this.actions.size() + 1), action);
     }
+    public void add(Action action, String actionCode){
+        this.actions.put(actionCode, action);
+    }
+
     public void add(Setting setting){
-        this.settings.put(convertIntegerInChar(this.settings.size() + 1), setting);
+        this.settings.put(convertIntInAlphabetLetter(this.settings.size() + 1), setting);
+    }
+    public void add(Setting setting, String actionCode){
+        this.settings.put(actionCode, setting);
     }
 
     public void clear() {
@@ -27,24 +34,26 @@ public class Menu {
         this.settings.clear();
     }
 
-    private Character convertIntegerInChar(int i){
-        return i > 0 && i < 27 ? (char)(i + 'a' - 1) : null;
+    private String convertIntInAlphabetLetter(int i){
+        return i > 0 && i < 27 ? String.format("%c", (char)(i + 'a' - 1)) : null;
     }
 
     private List<String> composeActionsRepresentations(){
         List<String> actionsRepresentations = new ArrayList<>();
-        int i = 1;
+        Object[] keys = this.actions.keySet().toArray();
+        int i = 0;
         for (Action action : this.actions.values()){
-            actionsRepresentations.add(String.format("%d. %s", i++, action.getDisplayName()));
+            actionsRepresentations.add(String.format("%s. %s", keys[i++], action.getDisplayName()));
         }
         return actionsRepresentations;
     }
     
     private List<String> composeSettingsRepresentations(){
         List<String> settingsRepresentations = new ArrayList<>();
-        char i = 'a';
+        Object[] keys = this.settings.keySet().toArray();
+        int i = 0;
         for (Setting setting : this.settings.values()){
-            settingsRepresentations.add(String.format("%c. %s", i++, setting.getRepresentation()));
+            settingsRepresentations.add(String.format("%s. %s", keys[i++], setting.getRepresentation()));
         }
         return settingsRepresentations;
     }
@@ -119,8 +128,9 @@ public class Menu {
 
     private void doOperation(String actionCode){
         try {
-            if (Main.isNumeric(actionCode)) { this.actions.get(actionCode).run(); }
-            else { this.settings.get(actionCode.toCharArray()[0]).change(); }
+            Set<String> actionKeys = this.actions.keySet();
+            if (actionKeys.contains(actionCode)) { this.actions.get(actionCode).run(); }
+            else { this.settings.get(actionCode).change(); }
         } catch (NullPointerException nullPointerException){
             System.out.println("| Operação inválida!\n| Digite uma letra ou \n| número correspondente.");
         } catch (RuntimeException runtimeException){
