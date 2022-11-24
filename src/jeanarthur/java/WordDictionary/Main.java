@@ -16,7 +16,7 @@ public class Main {
     static int wordListIndex = 0;
 
     public static void main(String[] args) {
-        registerTestWords();
+        //registerTestWords();
         registerMenus();
         registerActionsInMenus();
         registerSettingsInMenus();
@@ -47,7 +47,6 @@ public class Main {
         mainMenu.add(new Action("Editar", edit));
         mainMenu.add(new Action("Excluir", delete));
         mainMenu.add(new Action("Configurar", configure));
-        mainMenu.add(new Action("Listar", list));
         mainMenu.add(new Action("Sair", exit));
 
         Menu settingsMenu = menus.get("settings");
