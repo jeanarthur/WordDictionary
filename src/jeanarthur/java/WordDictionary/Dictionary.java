@@ -5,7 +5,7 @@ public class Dictionary {
     public static void register(){
         int freeIndex = Main.getFreeSpaceIndex();
         try{
-            if (freeIndex == -1) { throw new RuntimeException("| Não é possível cadastrar.\n| Limite de 100 palavras\n| atingido!"); }
+            if (freeIndex == -1) { throw Exception.wordLimitReached; }
             Main.dictionary[0][freeIndex] = Main.requestNonDuplicatedInputIn(Main.dictionary[0], String.format("| Digite a palavra (%s): ", Main.settings.get("primaryLanguage").getCurrentState()));
             Main.dictionary[1][freeIndex] = Main.requestNonDuplicatedInputIn(Main.dictionary[1], String.format("| Digite a palavra (%s): ", Main.settings.get("secondaryLanguage").getCurrentState()));
         } catch (RuntimeException runtimeException){
@@ -13,7 +13,7 @@ public class Dictionary {
                 Main.dictionary[0][freeIndex] = null;
                 Main.dictionary[1][freeIndex] = null;
             }
-            throw new RuntimeException(runtimeException.getMessage());
+            throw Exception.generic(runtimeException.getMessage());
         }
     }
 
@@ -28,7 +28,7 @@ public class Dictionary {
                 Main.dictionary[0][freeIndex] = null;
                 Main.dictionary[1][freeIndex] = null;
             }
-            throw new RuntimeException(runtimeException.getMessage());
+            throw Exception.wordNotFound;
         }
     }
 
@@ -39,7 +39,7 @@ public class Dictionary {
             System.out.printf("| %s: %s\n", Main.settings.get("primaryLanguage").getCurrentState(), (Main.dictionary[0][index]));
             System.out.printf("| %s: %s\n", Main.settings.get("secondaryLanguage").getCurrentState(), (Main.dictionary[1][index]));
         } catch (NullPointerException nullPointerException){
-            throw new RuntimeException("| Palavra não encontrada!");
+            throw Exception.wordNotFound;
         }
     }
 
@@ -49,7 +49,7 @@ public class Dictionary {
             System.out.printf("| %s: %s\n", Main.settings.get("primaryLanguage").getCurrentState(), (Main.dictionary[0][index]));
             System.out.printf("| %s: %s\n", Main.settings.get("secondaryLanguage").getCurrentState(), (Main.dictionary[1][index]));
         } catch (NullPointerException nullPointerException){
-            throw new RuntimeException("| Palavra não encontrada!");
+            throw Exception.wordNotFound;
         }
     }
 
@@ -60,7 +60,7 @@ public class Dictionary {
             Main.dictionary[0][index] = null;
             Main.dictionary[1][index] = null;
         }catch (NullPointerException nullPointerException){
-            throw new RuntimeException("| Palavra não encontrada!");
+            throw Exception.wordNotFound;
         }
     }
 
@@ -70,7 +70,7 @@ public class Dictionary {
             Main.dictionary[0][index] = null;
             Main.dictionary[1][index] = null;
         }catch (NullPointerException nullPointerException){
-            throw new RuntimeException("| Palavra não encontrada!");
+            throw Exception.wordNotFound;
         }
     }
 
@@ -80,7 +80,7 @@ public class Dictionary {
             int index = getIndexOf(word);
             Main.dictionary[1][index] = Main.requestNonDuplicatedInputIn(Main.dictionary[1], String.format("| Alterar '%s'(%s) para: ", Main.dictionary[1][index], Main.settings.get("secondaryLanguage").getCurrentState()));
         } catch (NullPointerException nullPointerException){
-            throw new RuntimeException("| Palavra não encontrada!");
+            throw Exception.wordNotFound;
         }
     }
 
@@ -89,7 +89,7 @@ public class Dictionary {
             int index = getIndexOf(word);
             Main.dictionary[1][index] = Main.requestNonDuplicatedInputIn(Main.dictionary[1], String.format("| Alterar '%s'(%s) para: ", Main.dictionary[1][index], Main.settings.get("secondaryLanguage").getCurrentState()));
         } catch (NullPointerException nullPointerException){
-            throw new RuntimeException("| Palavra não encontrada!");
+            throw Exception.wordNotFound;
         }
     }
 

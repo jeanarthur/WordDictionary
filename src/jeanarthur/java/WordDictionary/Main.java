@@ -153,7 +153,7 @@ public class Main {
         String input = requestInput(consoleMessage);
         boolean isDuplicated = Arrays.toString(stringArray).contains(" " + input) ||
                                Arrays.toString(stringArray).contains("[" + input);
-        if (isDuplicated) { throw new RuntimeException("| Não é possível cadastrar!\n| Palavra já foi registrada\n| para esse idioma."); }
+        if (isDuplicated) { throw Exception.wordAlreadyExists; }
         return input;
     }
 
