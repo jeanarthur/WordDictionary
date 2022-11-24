@@ -95,6 +95,7 @@ public class Main {
             wordList.add(new Action(registeredWords[i], consultFromList, registeredWords[i]), String.valueOf(i + 1));
             if (++wordCount == 5){ break; }
         }
+        wordList.addSeparator();
         if (wordListIndex > 0){ wordList.add(new Action("[ Anterior ]", previousInList), "a"); }
         if (wordListIndex + 5 < registeredWords.length){ wordList.add(new Action("[ Próximo ]", nextInList), "p"); }
         wordList.add(new Action("[ Voltar ]", exit), "v");

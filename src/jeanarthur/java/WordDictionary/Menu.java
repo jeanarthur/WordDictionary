@@ -9,6 +9,7 @@ public class Menu {
     private Map<String, Action> actions = new HashMap<>();
     private Map<String, Setting> settings = new HashMap<>();
     private List<String> componentKeys = new ArrayList<>();
+    private List<Integer> separatorIndexes = new ArrayList<>();
     private String view;
     private boolean isShowed = false;
 
@@ -36,10 +37,15 @@ public class Menu {
         this.componentKeys.add(actionCode);
     }
 
+    public void addSeparator(){
+        this.separatorIndexes.add(this.componentKeys.size() - 1);
+    }
+
     public void clear() {
         this.actions.clear();
         this.settings.clear();
         this.componentKeys.clear();
+        this.separatorIndexes.clear();
     }
 
     private String convertIntInAlphabetLetter(int i){
@@ -100,8 +106,10 @@ public class Menu {
         view += String.format(format, this.title);
         view += separator;
         if (actionsAmount > 0) {
+            int i = 0;
             for (String actionRepresentation : actionsRepresentations) {
                 view += String.format(format, actionRepresentation);
+                if (this.separatorIndexes.contains(i++)){ view += separator; }
             }
         }
         if (actionsAmount > 0 && settingsAmount > 0){
