@@ -96,7 +96,7 @@ public class Dictionary {
     private static int getIndexOf(String word){
         int index = -1;
         for (int i = 0; i < Main.dictionary[0].length; i++){
-            if (Main.dictionary[0][i].equals(word)){
+            if (Main.dictionary[0][i] != null && Main.dictionary[0][i].equals(word)){
                 index = i;
                 break;
             }

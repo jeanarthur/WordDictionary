@@ -10,7 +10,8 @@ public class Main {
     static String[] wordsPrimaryLanguage = new String[100];
     static String[] wordsSecondaryLanguage = new String[100];
     static String[][] dictionary = {wordsPrimaryLanguage, wordsSecondaryLanguage};
-
+    static Map<String, Consumer<String>> actionsInList = new HashMap<>();
+    static String currentActionInList;
     static String[] registeredWords;
     static int wordListIndex = 0;
 
@@ -19,6 +20,7 @@ public class Main {
         registerMenus();
         registerActionsInMenus();
         registerSettingsInMenus();
+        registerActionsInList();
         Menu.currentMenu = menus.get("main");
         printMenu(Menu.currentMenu);
     }
@@ -35,6 +37,7 @@ public class Main {
         menus.put("main", new Menu("Dicionário de Palavras"));
         menus.put("settings", new Menu("Configurações"));
         menus.put("wordList", new Menu("Lista de palavras"));
+        menus.put("genericAction", new Menu("genericAction"));
     }
 
     public static void registerActionsInMenus(){
@@ -62,14 +65,29 @@ public class Main {
         settingsMenu.add(settings.get("secondaryLanguage"));
     }
 
+    public static void registerActionsInList(){
+        actionsInList.put("consult", consultFromList);
+        actionsInList.put("edit", editFromList);
+        actionsInList.put("delete", deleteFromList);
+    }
+
     public static void printMenu(Menu menu){
         menu.open();
     }
 
     static Runnable register = Dictionary::register;
-    static Runnable consult = Dictionary::consult;
-    static Runnable edit = Dictionary::edit;
-    static Runnable delete = Dictionary::delete;
+    static Runnable consult = () -> {
+        currentActionInList = "consult";
+        updateGenericActionMenu("Consultar", Dictionary::consult);
+    };
+    static Runnable edit = () -> {
+        currentActionInList = "edit";
+        updateGenericActionMenu("Editar", Dictionary::edit);
+    };
+    static Runnable delete = () -> {
+        currentActionInList = "delete";
+        updateGenericActionMenu("Deletar", Dictionary::delete);
+    };
 
     static Runnable configure = () -> {
         Menu.currentMenu = menus.get("settings");
@@ -78,21 +96,42 @@ public class Main {
 
     static Consumer<String> consultFromList = (String word) -> {
         Dictionary.consult(word);
-        updateList();
+        updateList(actionsInList.get(currentActionInList));
     };
 
-    static Runnable list =() -> {
-        updateList();
+    static Consumer<String> editFromList = (String word) -> {
+        Dictionary.edit(word);
+        updateList(actionsInList.get(currentActionInList));
+    };
+
+    static Consumer<String> deleteFromList = (String word) -> {
+        Dictionary.delete(word);
+        updateList(actionsInList.get(currentActionInList));
+    };
+
+    static Runnable list = () -> {
+        wordListIndex = 0;
+        updateList(actionsInList.get(currentActionInList));
         menus.get("wordList").open();
     };
 
-    static void updateList(){
+    static void updateGenericActionMenu(String title, Runnable action){
+        menus.put("genericAction", new Menu(title));
+        Menu generic = menus.get("genericAction");
+        generic.add(new Action("Pesquisar", action));
+        generic.add(new Action("Listar", list));
+        generic.addSeparator();
+        generic.add(new Action("Voltar", exit), "v");
+        generic.open();
+    }
+
+    static void updateList(Consumer<String> actionInList){
         registeredWords = getNotNullValues(dictionary[0]);
         Menu wordList = menus.get("wordList");
         wordList.clear();
         int wordCount = 0;
         for (int i = wordListIndex; i < registeredWords.length; i++){
-            wordList.add(new Action(registeredWords[i], consultFromList, registeredWords[i]), String.valueOf(i + 1));
+            wordList.add(new Action(registeredWords[i], actionInList, registeredWords[i]), String.valueOf(i + 1));
             if (++wordCount == 5){ break; }
         }
         wordList.addSeparator();
@@ -103,11 +142,11 @@ public class Main {
 
     static Runnable nextInList = () -> {
         wordListIndex += (wordListIndex + 5 < registeredWords.length) ? 5 : registeredWords.length - wordListIndex;
-        updateList();
+        updateList(actionsInList.get(currentActionInList));
     };
     static Runnable previousInList = () -> {
         wordListIndex -= 5;
-        updateList();
+        updateList(actionsInList.get(currentActionInList));
     };
     static Runnable exit = () -> Menu.currentMenu.close();
 
