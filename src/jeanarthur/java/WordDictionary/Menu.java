@@ -27,8 +27,8 @@ public class Menu {
     }
 
     public void add(Setting setting){
-        String key = Integer.toString(this.settings.size() + 1);
-        this.settings.put(convertIntInAlphabetLetter(this.settings.size() + 1), setting);
+        String key = convertIntInAlphabetLetter(this.settings.size() + 1);
+        this.settings.put(key, setting);
         this.componentKeys.add(key);
     }
     public void add(Setting setting, String actionCode){
@@ -39,10 +39,12 @@ public class Menu {
     public void clear() {
         this.actions.clear();
         this.settings.clear();
+        this.componentKeys.clear();
     }
 
     private String convertIntInAlphabetLetter(int i){
-        return i > 0 && i < 27 ? String.format("%c", (char)(i + 'a' - 1)) : null;
+
+        return i > 0 && i < 27 ? Character.toString((char)(i + 'a' - 1)) : null;
     }
 
     private List<List<String>> composeRepresentations(){

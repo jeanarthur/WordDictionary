@@ -92,7 +92,7 @@ public class Main {
         wordList.clear();
         int wordCount = 0;
         for (int i = wordListIndex; i < registeredWords.length; i++){
-            wordList.add(new Action(registeredWords[i], consultFromList, registeredWords[i]));
+            wordList.add(new Action(registeredWords[i], consultFromList, registeredWords[i]), String.valueOf(i + 1));
             if (++wordCount == 5){ break; }
         }
         if (wordListIndex > 0){ wordList.add(new Action("[ Anterior ]", previousInList), "a"); }
