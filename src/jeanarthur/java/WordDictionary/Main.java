@@ -51,6 +51,8 @@ public class Main {
         mainMenu.add(new Action("Configurar", configure));
         mainMenu.add(new Action("Sair", exit));
 
+        menus.get("instructions").add(new Action("Prosseguir", exitInstructions));
+
         Menu settingsMenu = menus.get("settings");
         settingsMenu.add(new Action("Voltar", exit));
 
@@ -60,22 +62,36 @@ public class Main {
         settings.put("programIsRunning", new Setting("Programa em execução", 0, "sim", "não"));
         settings.put("primaryLanguage", new Setting("Linguagem Primária","Inglês"));
         settings.put("secondaryLanguage", new Setting("Linguagem Secundária","Português"));
+        settings.put("instructionsStatus", new Setting("Estado: ", "Lendo", "Instruções compreendidas"));
 
         Menu settingsMenu = menus.get("settings");
         settingsMenu.add(settings.get("primaryLanguage"));
         settingsMenu.add(settings.get("secondaryLanguage"));
+        menus.get("instructions").add(settings.get("instructionsStatus"));
     }
 
     public static void registerTextsInMenus(){
         menus.get("instructions").add("""
-                Para interagir com o sistema você deve
-                digitar o número ou a letra antes do .(ponto),
-                correspondente a operação desejada
-                Por exemplo, caso o menu exiba as opções:
+                Para interagir com as funções do sistema deve-se\s
+                digitar o número ou a letra que corresponda a\s
+                opção/operação desejada.
+                                
+                Por exemplo: se o menu exibe as opções.
                 1. Cadastrar
+                a. Linguagem Primária: Inglês
+                b. Pesquisa/Listagem em: [x] Inglês [ ] Português
                 v. Voltar
-                você poderá executar as ações digitando
-                1 para Cadastrar ou v para Voltar""");
+                                
+                Você possuirá quatro interações possíveis:
+                Caso digite 1 - Será solicitado o cadastro de uma
+                    palavra e seu significado.
+                Caso digite a - Será solicitado um novo valor para
+                    configuração de linguagem do dicionário.
+                Caso digite b - Altera entre as opções da linha,
+                    nesse caso ficaria: [ ] Inglês [x] Português
+                Caso digite v - Será retornado ao menu anterior.
+                """);
+        menus.get("instructions").addSeparator();
     }
 
     public static void registerActionsInList(){
@@ -88,6 +104,20 @@ public class Main {
         menu.open();
     }
 
+    static Runnable exitInstructions = () -> {
+        Menu.currentMenu.close();
+        if (!settings.get("instructionsStatus").getCurrentState().equals("Instruções compreendidas")){
+            menus.get("instructions").add("""
+                    Você deve marcar que compreendeu as instruções para
+                    prosseguir. Observe a instrução de como altera entre
+                    as opções de uma linha.
+                    """);
+            menus.get("instructions").open();
+        } else {
+            Menu.currentMenu = menus.get("main");
+            printMenu(Menu.currentMenu);
+        }
+    };
     static Runnable register = Dictionary::register;
     static Runnable consult = () -> {
         currentActionInList = "consult";

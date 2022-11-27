@@ -7,7 +7,6 @@ public class Setting {
     private String displayName;
     private String representation;
     private int stateValue = 0;
-    private String group = "standard";
     private String[] states;
 
     public Setting(String displayName, String... states){
@@ -29,21 +28,6 @@ public class Setting {
         this.setRepresentation();
     }
 
-    public Setting(String displayName, String group, int startStateValue, String... states){
-        this.displayName = displayName;
-        this.states = Objects.requireNonNullElseGet(states, () -> new String[]{"true", "false"});
-        this.stateValue = startStateValue;
-        this.group = group;
-        this.setRepresentation();
-    }
-
-    public Setting(String displayName, String group, String state){
-        this.displayName = displayName;
-        this.states = new String[]{state};
-        this.group = group;
-        this.setRepresentation();
-    }
-
     private void setRepresentation(){
         this.representation = this.displayName + ": ";
         if (this.states.length == 1){
@@ -51,6 +35,7 @@ public class Setting {
         } else {
             for (int i = 0; i < this.states.length; i++){
                 this.representation += (i == this.stateValue) ? "[X]" + this.states[i] : "[ ]" + this.states[i];
+                if (i + 1 < this.states.length) { this.representation += " "; }
             }
         }
 
@@ -70,7 +55,7 @@ public class Setting {
     }
 
     private void changeState(){
-        this.states[this.stateValue] = Main.requestInput("Alterar linguagem '" + this.states[0] + "' para: ");
+        this.states[this.stateValue] = Main.requestInput("Alterar '" + this.states[0] + "' para: ");
     }
 
     public String getRepresentation() {
@@ -79,10 +64,6 @@ public class Setting {
 
     public int getStateValue(){
         return this.stateValue;
-    }
-
-    public String getGroup(){
-        return this.group;
     }
 
     public String getDisplayName(){ return this.displayName; }
