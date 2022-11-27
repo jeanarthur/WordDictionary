@@ -84,9 +84,10 @@ public class Dictionary {
 
     public static void edit(){
         try{
+            String[] activeLanguageWords = Main.dictionary[Main.settings.get("activeLanguage").getStateValue()];
             String word = Main.requestInput("| Editar: ");
             int index = getIndexOf(word);
-            Main.dictionary[1][index] = Main.requestNonDuplicatedInputIn(Main.dictionary[1], String.format("| Alterar '%s'(%s) para: ", Main.dictionary[1][index], Main.settings.get("secondaryLanguage").getCurrentState()));
+            activeLanguageWords[index] = Main.requestNonDuplicatedInputIn(activeLanguageWords, String.format("| Alterar '%s'(%s) para: ", activeLanguageWords[index], Main.settings.get("activeLanguage").getCurrentState()));
         } catch (NullPointerException nullPointerException){
             throw Exception.generic(nullPointerException.getMessage());
         } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){
@@ -96,8 +97,9 @@ public class Dictionary {
 
     public static void edit(String word){
         try{
+            String[] activeLanguageWords = Main.dictionary[Main.settings.get("activeLanguage").getStateValue()];
             int index = getIndexOf(word);
-            Main.dictionary[1][index] = Main.requestNonDuplicatedInputIn(Main.dictionary[1], String.format("| Alterar '%s'(%s) para: ", Main.dictionary[1][index], Main.settings.get("secondaryLanguage").getCurrentState()));
+            activeLanguageWords[index] = Main.requestNonDuplicatedInputIn(activeLanguageWords, String.format("| Alterar '%s'(%s) para: ", activeLanguageWords[index], Main.settings.get("activeLanguage").getCurrentState()));
         } catch (NullPointerException nullPointerException){
             throw Exception.generic(nullPointerException.getMessage());
         } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){
@@ -107,8 +109,9 @@ public class Dictionary {
 
     private static int getIndexOf(String word){
         int index = -1;
-        for (int i = 0; i < Main.dictionary[0].length; i++){
-            if (Main.dictionary[0][i] != null && Main.dictionary[0][i].equals(word)){
+        String[] activeLanguageWords = Main.dictionary[Main.settings.get("activeLanguage").getStateValue()];
+        for (int i = 0; i < activeLanguageWords.length; i++){
+            if (activeLanguageWords[i] != null && activeLanguageWords[i].equals(word)){
                 index = i;
                 break;
             }

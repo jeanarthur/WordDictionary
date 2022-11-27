@@ -73,7 +73,8 @@ public class Menu {
             } else if (settingKeys.contains(key)){
                 settingsRepresentations.add(String.format("%s. %s", key, this.settings.get(key).getRepresentation()));
             } else {
-                textRepresentations.addAll(Arrays.asList(this.texts.get(key).split("\\n")));
+                //textRepresentations.addAll(Arrays.asList(this.texts.get(key).split("\\n")));
+                textRepresentations.add(this.texts.get(key));
             }
         }
         List<List<String>> representations = new ArrayList<>();
@@ -109,7 +110,11 @@ public class Menu {
         List<String> actionsRepresentations = representations.get(0);
         List<String> settingsRepresentations = representations.get(1);
         List<String> textsRepresentations = representations.get(2);
-        int width = getLargerStringLength(actionsRepresentations, settingsRepresentations, textsRepresentations);
+        List<String> textsLines = new ArrayList<>();
+        for (String text : textsRepresentations){
+            textsLines.addAll(Arrays.asList(text.split("\\n")));
+        }
+        int width = getLargerStringLength(actionsRepresentations, settingsRepresentations, textsLines);
         int actionsAmount = actionsRepresentations.size();
         int settingsAmount = settingsRepresentations.size();
         int textsAmount = textsRepresentations.size();
@@ -120,27 +125,22 @@ public class Menu {
         view = delimiter;
         view += String.format(format, this.title);
         view += separator;
-        if (textsAmount > 0){
-            int i = 0;
-            for (String text : textsRepresentations) {
-                view += String.format(format, text);
-                if (this.separatorIndexes.contains(i++)){ view += separator; }
+        Set<String> actionKeys = this.actions.keySet();
+        Set<String> settingKeys = this.settings.keySet();
+        int separatorIndex = 0, actionIndex = 0, settingIndex = 0, textIndex = 0;
+        for (String key : this.componentKeys){
+            if (actionsAmount > 0 && actionKeys.contains(key)){
+                view += String.format(format, actionsRepresentations.get(actionIndex++));
+            } else if (settingsAmount > 0 && settingKeys.contains(key)){
+                view += String.format(format, settingsRepresentations.get(settingIndex++));
+            } else if (textsAmount > 0) {
+                for (String line : textsRepresentations.get(textIndex++).split("\\n")){
+                    view += String.format(format, line);
+                }
+            } else {
+                view += "ERROR!";
             }
-        }
-        if (actionsAmount > 0) {
-            int i = 0;
-            for (String actionRepresentation : actionsRepresentations) {
-                view += String.format(format, actionRepresentation);
-                if (this.separatorIndexes.contains(i++)){ view += separator; }
-            }
-        }
-        if (actionsAmount > 0 && settingsAmount > 0){
-            view += separator;
-        }
-        if (settingsAmount > 0){
-            for (String settingRepresentation : settingsRepresentations) {
-                view += String.format(format, settingRepresentation);
-            }
+            if (this.separatorIndexes.contains(separatorIndex++)){ view += separator; }
         }
         view += delimiter.substring(0, delimiter.length() - 1);
     }

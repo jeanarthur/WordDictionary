@@ -16,13 +16,15 @@ public class Main {
     static int wordListIndex = 0;
 
     public static void main(String[] args) {
-        //registerTestWords();
+        registerTestWords();
         registerMenus();
-        registerTextsInMenus();
         registerActionsInMenus();
         registerSettingsInMenus();
         registerActionsInList();
+        registerInstructionsMenu();
         Menu.currentMenu = menus.get("instructions");
+        printMenu(Menu.currentMenu);
+        Menu.currentMenu = menus.get("main");
         printMenu(Menu.currentMenu);
     }
 
@@ -35,11 +37,11 @@ public class Main {
     }
 
     public static void registerMenus(){
-        menus.put("instructions", new Menu("Instruções"));
         menus.put("main", new Menu("Dicionário de Palavras"));
         menus.put("settings", new Menu("Configurações"));
         menus.put("wordList", new Menu("Lista de palavras"));
         menus.put("genericAction", new Menu("genericAction"));
+        menus.put("instructions", new Menu("Instrução"));
     }
 
     public static void registerActionsInMenus(){
@@ -51,8 +53,6 @@ public class Main {
         mainMenu.add(new Action("Configurar", configure));
         mainMenu.add(new Action("Sair", exit));
 
-        menus.get("instructions").add(new Action("Prosseguir", exitInstructions));
-
         Menu settingsMenu = menus.get("settings");
         settingsMenu.add(new Action("Voltar", exit));
 
@@ -62,36 +62,16 @@ public class Main {
         settings.put("programIsRunning", new Setting("Programa em execução", 0, "sim", "não"));
         settings.put("primaryLanguage", new Setting("Linguagem Primária","Inglês"));
         settings.put("secondaryLanguage", new Setting("Linguagem Secundária","Português"));
-        settings.put("instructionsStatus", new Setting("Estado: ", "Lendo", "Instruções compreendidas"));
+        settings.put("activeLanguage", new Setting("Pesquisar/Listar em", settings.get("primaryLanguage").getCurrentState(), settings.get("secondaryLanguage").getCurrentState()));
 
         Menu settingsMenu = menus.get("settings");
         settingsMenu.add(settings.get("primaryLanguage"));
         settingsMenu.add(settings.get("secondaryLanguage"));
-        menus.get("instructions").add(settings.get("instructionsStatus"));
+
     }
 
     public static void registerTextsInMenus(){
-        menus.get("instructions").add("""
-                Para interagir com as funções do sistema deve-se\s
-                digitar o número ou a letra que corresponda a\s
-                opção/operação desejada.
-                                
-                Por exemplo: se o menu exibe as opções.
-                1. Cadastrar
-                a. Linguagem Primária: Inglês
-                b. Pesquisa/Listagem em: [x] Inglês [ ] Português
-                v. Voltar
-                                
-                Você possuirá quatro interações possíveis:
-                Caso digite 1 - Será solicitado o cadastro de uma
-                    palavra e seu significado.
-                Caso digite a - Será solicitado um novo valor para
-                    configuração de linguagem do dicionário.
-                Caso digite b - Altera entre as opções da linha,
-                    nesse caso ficaria: [ ] Inglês [x] Português
-                Caso digite v - Será retornado ao menu anterior.
-                """);
-        menus.get("instructions").addSeparator();
+
     }
 
     public static void registerActionsInList(){
@@ -100,24 +80,21 @@ public class Main {
         actionsInList.put("delete", deleteFromList);
     }
 
+    public static void registerInstructionsMenu(){
+        Menu instructions = menus.get("instructions");
+        instructions.add("""
+                Para interagir com as funções do sistema deve-se
+                digitar o número ou a letra que corresponda a
+                opção/operação desejada.
+                """);
+        instructions.addSeparator();
+        instructions.add(new Action("Prosseguir", exit));
+    }
+
     public static void printMenu(Menu menu){
         menu.open();
     }
 
-    static Runnable exitInstructions = () -> {
-        Menu.currentMenu.close();
-        if (!settings.get("instructionsStatus").getCurrentState().equals("Instruções compreendidas")){
-            menus.get("instructions").add("""
-                    Você deve marcar que compreendeu as instruções para
-                    prosseguir. Observe a instrução de como altera entre
-                    as opções de uma linha.
-                    """);
-            menus.get("instructions").open();
-        } else {
-            Menu.currentMenu = menus.get("main");
-            printMenu(Menu.currentMenu);
-        }
-    };
     static Runnable register = Dictionary::register;
     static Runnable consult = () -> {
         currentActionInList = "consult";
@@ -160,16 +137,19 @@ public class Main {
 
     static void updateGenericActionMenu(String title, Runnable action){
         menus.put("genericAction", new Menu(title));
+        settings.put("activeLanguage", new Setting("Pesquisar/Listar em", settings.get("primaryLanguage").getCurrentState(), settings.get("secondaryLanguage").getCurrentState()));
         Menu generic = menus.get("genericAction");
         generic.add(new Action("Pesquisar", action));
         generic.add(new Action("Listar", list));
+        generic.addSeparator();
+        generic.add(settings.get("activeLanguage"));
         generic.addSeparator();
         generic.add(new Action("Voltar", exit), "v");
         generic.open();
     }
 
     static void updateList(Consumer<String> actionInList){
-        registeredWords = getNotNullValues(dictionary[0]);
+        registeredWords = getNotNullValues(dictionary[settings.get("activeLanguage").getStateValue()]);
         Menu wordList = menus.get("wordList");
         wordList.clear();
         int wordCount = 0;
