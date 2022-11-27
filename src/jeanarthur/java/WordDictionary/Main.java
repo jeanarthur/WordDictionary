@@ -18,10 +18,11 @@ public class Main {
     public static void main(String[] args) {
         //registerTestWords();
         registerMenus();
+        registerTextsInMenus();
         registerActionsInMenus();
         registerSettingsInMenus();
         registerActionsInList();
-        Menu.currentMenu = menus.get("main");
+        Menu.currentMenu = menus.get("instructions");
         printMenu(Menu.currentMenu);
     }
 
@@ -34,6 +35,7 @@ public class Main {
     }
 
     public static void registerMenus(){
+        menus.put("instructions", new Menu("Instruções"));
         menus.put("main", new Menu("Dicionário de Palavras"));
         menus.put("settings", new Menu("Configurações"));
         menus.put("wordList", new Menu("Lista de palavras"));
@@ -55,13 +57,25 @@ public class Main {
     }
 
     public static void registerSettingsInMenus(){
-        settings.put("programIsRunning", new Setting("Programa em execução","system", 0, "sim", "não"));
-        settings.put("primaryLanguage", new Setting("Linguagem Primária","program","Português"));
-        settings.put("secondaryLanguage", new Setting("Linguagem Secundária","program","Inglês"));
+        settings.put("programIsRunning", new Setting("Programa em execução", 0, "sim", "não"));
+        settings.put("primaryLanguage", new Setting("Linguagem Primária","Inglês"));
+        settings.put("secondaryLanguage", new Setting("Linguagem Secundária","Português"));
 
         Menu settingsMenu = menus.get("settings");
         settingsMenu.add(settings.get("primaryLanguage"));
         settingsMenu.add(settings.get("secondaryLanguage"));
+    }
+
+    public static void registerTextsInMenus(){
+        menus.get("instructions").add("""
+                Para interagir com o sistema você deve
+                digitar o número ou a letra antes do .(ponto),
+                correspondente a operação desejada
+                Por exemplo, caso o menu exiba as opções:
+                1. Cadastrar
+                v. Voltar
+                você poderá executar as ações digitando
+                1 para Cadastrar ou v para Voltar""");
     }
 
     public static void registerActionsInList(){
@@ -85,7 +99,7 @@ public class Main {
     };
     static Runnable delete = () -> {
         currentActionInList = "delete";
-        updateGenericActionMenu("Deletar", Dictionary::delete);
+        updateGenericActionMenu("Excluir", Dictionary::delete);
     };
 
     static Runnable configure = () -> {

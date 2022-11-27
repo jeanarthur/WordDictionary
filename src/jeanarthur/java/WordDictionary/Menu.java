@@ -8,6 +8,7 @@ public class Menu {
     private final String title;
     private Map<String, Action> actions = new HashMap<>();
     private Map<String, Setting> settings = new HashMap<>();
+    private Map<String, String> texts = new HashMap<>();
     private List<String> componentKeys = new ArrayList<>();
     private List<Integer> separatorIndexes = new ArrayList<>();
     private String view;
@@ -32,6 +33,13 @@ public class Menu {
         this.settings.put(key, setting);
         this.componentKeys.add(key);
     }
+
+    public void add(String text){
+        String key = "menu.text_" + (this.texts.size() + 1);
+        this.texts.put(key, text);
+        this.componentKeys.add(key);
+    }
+
     public void add(Setting setting, String actionCode){
         this.settings.put(actionCode, setting);
         this.componentKeys.add(actionCode);
@@ -56,17 +64,22 @@ public class Menu {
     private List<List<String>> composeRepresentations(){
         List<String> actionsRepresentations = new ArrayList<>();
         List<String> settingsRepresentations = new ArrayList<>();
+        List<String> textRepresentations = new ArrayList<>();
         Set<String> actionKeys = this.actions.keySet();
+        Set<String> settingKeys = this.settings.keySet();
         for (String key : this.componentKeys){
             if (actionKeys.contains(key)){
                 actionsRepresentations.add(String.format("%s. %s", key, this.actions.get(key).getDisplayName()));
-            } else {
+            } else if (settingKeys.contains(key)){
                 settingsRepresentations.add(String.format("%s. %s", key, this.settings.get(key).getRepresentation()));
+            } else {
+                textRepresentations.addAll(Arrays.asList(this.texts.get(key).split("\\n")));
             }
         }
         List<List<String>> representations = new ArrayList<>();
         representations.add(actionsRepresentations);
         representations.add(settingsRepresentations);
+        representations.add(textRepresentations);
 
         return representations;
     }
@@ -95,9 +108,11 @@ public class Menu {
         List<List<String>> representations = composeRepresentations();
         List<String> actionsRepresentations = representations.get(0);
         List<String> settingsRepresentations = representations.get(1);
-        int width = getLargerStringLength(actionsRepresentations, settingsRepresentations);
+        List<String> textsRepresentations = representations.get(2);
+        int width = getLargerStringLength(actionsRepresentations, settingsRepresentations, textsRepresentations);
         int actionsAmount = actionsRepresentations.size();
         int settingsAmount = settingsRepresentations.size();
+        int textsAmount = textsRepresentations.size();
         String delimiter = String.format("+%s+\n", "=".repeat(width+2));
         String separator = String.format("+%s+\n", "-".repeat(width+2));
         String format = "| %-" + width + "s |\n";
@@ -105,6 +120,13 @@ public class Menu {
         view = delimiter;
         view += String.format(format, this.title);
         view += separator;
+        if (textsAmount > 0){
+            int i = 0;
+            for (String text : textsRepresentations) {
+                view += String.format(format, text);
+                if (this.separatorIndexes.contains(i++)){ view += separator; }
+            }
+        }
         if (actionsAmount > 0) {
             int i = 0;
             for (String actionRepresentation : actionsRepresentations) {
@@ -158,7 +180,7 @@ public class Menu {
     }
 
     private void doInputOutputOperation() {
-        String actionCode = Main.requestInput("| Executar ação nº: ");
+        String actionCode = Main.requestInput("| Executar ação: ");
         doOperation(actionCode);
     }
 
