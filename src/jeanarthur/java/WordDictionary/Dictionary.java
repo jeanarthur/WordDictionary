@@ -36,8 +36,10 @@ public class Dictionary {
         try {
             String word = Main.requestInput("| Consultar: ");
             int index = getIndexOf(word);
-            System.out.printf("| %s: %s\n", Main.settings.get("primaryLanguage").getCurrentState(), (Main.dictionary[0][index]));
-            System.out.printf("| %s: %s\n", Main.settings.get("secondaryLanguage").getCurrentState(), (Main.dictionary[1][index]));
+            /*System.out.printf("| %s: %s\n", Main.settings.get("primaryLanguage").getCurrentState(), (Main.dictionary[0][index]));
+            System.out.printf("| %s: %s\n", Main.settings.get("secondaryLanguage").getCurrentState(), (Main.dictionary[1][index]));*/
+            Main.updateConsultedWordMenu(new String[]{Main.dictionary[0][index], Main.dictionary[1][index]});
+            Main.menus.get("consultedWord").open();
         } catch (NullPointerException nullPointerException){
             throw Exception.generic(nullPointerException.getMessage());
         } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){
@@ -48,8 +50,10 @@ public class Dictionary {
     public static void consult(String word){
         try {
             int index = getIndexOf(word);
-            System.out.printf("| %s: %s\n", Main.settings.get("primaryLanguage").getCurrentState(), (Main.dictionary[0][index]));
-            System.out.printf("| %s: %s\n", Main.settings.get("secondaryLanguage").getCurrentState(), (Main.dictionary[1][index]));
+            /*System.out.printf("| %s: %s\n", Main.settings.get("primaryLanguage").getCurrentState(), (Main.dictionary[0][index]));
+            System.out.printf("| %s: %s\n", Main.settings.get("secondaryLanguage").getCurrentState(), (Main.dictionary[1][index]));*/
+            Main.updateConsultedWordMenu(new String[]{Main.dictionary[0][index], Main.dictionary[1][index]});
+            Main.menus.get("consultedWord").open();
         } catch (NullPointerException nullPointerException){
             throw Exception.generic(nullPointerException.getMessage());
         } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){
@@ -63,6 +67,7 @@ public class Dictionary {
             int index = getIndexOf(word);
             Main.dictionary[0][index] = null;
             Main.dictionary[1][index] = null;
+            Main.updateConsultedWordMenu(new String[]{Main.dictionary[0][index], Main.dictionary[1][index]});
         } catch (NullPointerException nullPointerException){
             throw Exception.generic(nullPointerException.getMessage());
         } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){
@@ -75,6 +80,7 @@ public class Dictionary {
             int index = getIndexOf(word);
             Main.dictionary[0][index] = null;
             Main.dictionary[1][index] = null;
+            Main.updateConsultedWordMenu(new String[]{Main.dictionary[0][index], Main.dictionary[1][index]});
         } catch (NullPointerException nullPointerException){
             throw Exception.generic(nullPointerException.getMessage());
         } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){
@@ -88,6 +94,7 @@ public class Dictionary {
             String word = Main.requestInput("| Editar: ");
             int index = getIndexOf(word);
             activeLanguageWords[index] = Main.requestNonDuplicatedInputIn(activeLanguageWords, String.format("| Alterar '%s'(%s) para: ", activeLanguageWords[index], Main.settings.get("activeLanguage").getCurrentState()));
+            Main.updateConsultedWordMenu(new String[]{Main.dictionary[0][index], Main.dictionary[1][index]});
         } catch (NullPointerException nullPointerException){
             throw Exception.generic(nullPointerException.getMessage());
         } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){
@@ -100,6 +107,7 @@ public class Dictionary {
             String[] activeLanguageWords = Main.dictionary[Main.settings.get("activeLanguage").getStateValue()];
             int index = getIndexOf(word);
             activeLanguageWords[index] = Main.requestNonDuplicatedInputIn(activeLanguageWords, String.format("| Alterar '%s'(%s) para: ", activeLanguageWords[index], Main.settings.get("activeLanguage").getCurrentState()));
+            Main.updateConsultedWordMenu(new String[]{Main.dictionary[0][index], Main.dictionary[1][index]});
         } catch (NullPointerException nullPointerException){
             throw Exception.generic(nullPointerException.getMessage());
         } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){

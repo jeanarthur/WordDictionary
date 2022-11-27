@@ -29,17 +29,18 @@ public class Main {
     }
 
     public static void registerTestWords(){
-        Dictionary.register("casa", "home");
-        Dictionary.register("gelo", "ice");
-        Dictionary.register("sala", "room");
-        Dictionary.register("fazer", "do");
-        Dictionary.register("limpar", "clear");
+        Dictionary.register("home", "casa");
+        Dictionary.register("ice", "gelo");
+        Dictionary.register("room", "sala");
+        Dictionary.register("do", "fazer");
+        Dictionary.register("clear", "limpar");
     }
 
     public static void registerMenus(){
         menus.put("main", new Menu("Dicionário de Palavras"));
         menus.put("settings", new Menu("Configurações"));
         menus.put("wordList", new Menu("Lista de palavras"));
+        menus.put("consultedWord", new Menu("Palavra consultada"));
         menus.put("genericAction", new Menu("genericAction"));
         menus.put("instructions", new Menu("Instrução"));
     }
@@ -50,7 +51,7 @@ public class Main {
         mainMenu.add(new Action("Consultar", consult));
         mainMenu.add(new Action("Editar", edit));
         mainMenu.add(new Action("Excluir", delete));
-        mainMenu.add(new Action("Configurar", configure));
+        //mainMenu.add(new Action("Configurar", configure));
         mainMenu.add(new Action("Sair", exit));
 
         Menu settingsMenu = menus.get("settings");
@@ -127,6 +128,7 @@ public class Main {
     static Consumer<String> deleteFromList = (String word) -> {
         Dictionary.delete(word);
         updateList(actionsInList.get(currentActionInList));
+        Menu.currentMenu.close();
     };
 
     static Runnable list = () -> {
@@ -134,6 +136,23 @@ public class Main {
         updateList(actionsInList.get(currentActionInList));
         menus.get("wordList").open();
     };
+
+    static Runnable consultV2 = () -> {
+        wordListIndex = 0;
+        //updateConsultedWordMenu(Dictionary.consult());
+        menus.get("consultedWord").open();
+    };
+
+    static void updateConsultedWordMenu(String[] words){
+        Menu consulted = menus.get("consultedWord");
+        consulted.clear();
+        consulted.add(String.format("%s: %s\n", Main.settings.get("primaryLanguage").getCurrentState(), words[0]));
+        consulted.add(String.format("%s: %s\n", Main.settings.get("secondaryLanguage").getCurrentState(), words[1]));
+        consulted.addSeparator();
+        consulted.add(new Action("Editar", editFromList, words[settings.get("activeLanguage").getStateValue()]), "a");
+        consulted.add(new Action("Excluir", deleteFromList, words[settings.get("activeLanguage").getStateValue()]), "b");
+        consulted.add(new Action("Voltar", exit), "v");
+    }
 
     static void updateGenericActionMenu(String title, Runnable action){
         menus.put("genericAction", new Menu(title));
