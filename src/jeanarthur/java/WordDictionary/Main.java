@@ -71,10 +71,6 @@ public class Main {
 
     }
 
-    public static void registerTextsInMenus(){
-
-    }
-
     public static void registerActionsInList(){
         actionsInList.put("consult", consultFromList);
         actionsInList.put("edit", editFromList);
@@ -100,6 +96,7 @@ public class Main {
     static Runnable consult = () -> {
         currentActionInList = "consult";
         updateGenericActionMenu("Consultar", Dictionary::consult);
+        menus.get("consultedWord").open();
     };
     static Runnable edit = () -> {
         currentActionInList = "edit";
@@ -108,11 +105,6 @@ public class Main {
     static Runnable delete = () -> {
         currentActionInList = "delete";
         updateGenericActionMenu("Excluir", Dictionary::delete);
-    };
-
-    static Runnable configure = () -> {
-        Menu.currentMenu = menus.get("settings");
-        Menu.currentMenu.open();
     };
 
     static Consumer<String> consultFromList = (String word) -> {
@@ -137,11 +129,6 @@ public class Main {
         menus.get("wordList").open();
     };
 
-    static Runnable consultV2 = () -> {
-        wordListIndex = 0;
-        //updateConsultedWordMenu(Dictionary.consult());
-        menus.get("consultedWord").open();
-    };
 
     static void updateConsultedWordMenu(String[] words){
         Menu consulted = menus.get("consultedWord");
@@ -215,15 +202,6 @@ public class Main {
             }
         }
         return freeIndex;
-    }
-
-    public static boolean isNumeric(String string){
-        try {
-            Integer.parseInt(string);
-            return true;
-        } catch (NumberFormatException numberFormatException){
-            return false;
-        }
     }
 
     public static String[] getNotNullValues(String[] array){

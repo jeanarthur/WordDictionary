@@ -4,10 +4,10 @@ import java.util.Objects;
 
 public class Setting {
 
-    private String displayName;
+    private final String displayName;
     private String representation;
     private int stateValue = 0;
-    private String[] states;
+    private final String[] states;
 
     public Setting(String displayName, String... states){
         this.displayName = displayName;
@@ -28,6 +28,7 @@ public class Setting {
         this.setRepresentation();
     }
 
+    @SuppressWarnings("StringConcatenationInLoop")
     private void setRepresentation(){
         this.representation = this.displayName + ": ";
         if (this.states.length == 1){
@@ -65,8 +66,6 @@ public class Setting {
     public int getStateValue(){
         return this.stateValue;
     }
-
-    public String getDisplayName(){ return this.displayName; }
 
     public String getCurrentState(){
         return this.states[this.stateValue];

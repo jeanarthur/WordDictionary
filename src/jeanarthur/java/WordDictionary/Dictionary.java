@@ -1,5 +1,7 @@
 package jeanarthur.java.WordDictionary;
 
+import java.util.Objects;
+
 public class Dictionary {
 
     public static void register(){
@@ -25,7 +27,7 @@ public class Dictionary {
             Main.dictionary[1][freeIndex] = word2;
         } catch (RuntimeException runtimeException){
             if (freeIndex != -1) {
-                Main.dictionary[0][freeIndex] = null;
+                Objects.requireNonNull(Objects.requireNonNull(Main.dictionary)[0])[freeIndex] = null;
                 Main.dictionary[1][freeIndex] = null;
             }
             throw Exception.wordNotFound;
@@ -36,10 +38,7 @@ public class Dictionary {
         try {
             String word = Main.requestInput("| Consultar: ");
             int index = getIndexOf(word);
-            /*System.out.printf("| %s: %s\n", Main.settings.get("primaryLanguage").getCurrentState(), (Main.dictionary[0][index]));
-            System.out.printf("| %s: %s\n", Main.settings.get("secondaryLanguage").getCurrentState(), (Main.dictionary[1][index]));*/
             Main.updateConsultedWordMenu(new String[]{Main.dictionary[0][index], Main.dictionary[1][index]});
-            Main.menus.get("consultedWord").open();
         } catch (NullPointerException nullPointerException){
             throw Exception.generic(nullPointerException.getMessage());
         } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){
@@ -50,10 +49,7 @@ public class Dictionary {
     public static void consult(String word){
         try {
             int index = getIndexOf(word);
-            /*System.out.printf("| %s: %s\n", Main.settings.get("primaryLanguage").getCurrentState(), (Main.dictionary[0][index]));
-            System.out.printf("| %s: %s\n", Main.settings.get("secondaryLanguage").getCurrentState(), (Main.dictionary[1][index]));*/
             Main.updateConsultedWordMenu(new String[]{Main.dictionary[0][index], Main.dictionary[1][index]});
-            Main.menus.get("consultedWord").open();
         } catch (NullPointerException nullPointerException){
             throw Exception.generic(nullPointerException.getMessage());
         } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){

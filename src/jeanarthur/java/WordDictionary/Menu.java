@@ -6,11 +6,11 @@ public class Menu {
 
     public static Menu currentMenu;
     private final String title;
-    private Map<String, Action> actions = new HashMap<>();
-    private Map<String, Setting> settings = new HashMap<>();
-    private Map<String, String> texts = new HashMap<>();
-    private List<String> componentKeys = new ArrayList<>();
-    private List<Integer> separatorIndexes = new ArrayList<>();
+    private final Map<String, Action> actions = new HashMap<>();
+    private final Map<String, Setting> settings = new HashMap<>();
+    private final Map<String, String> texts = new HashMap<>();
+    private final List<String> componentKeys = new ArrayList<>();
+    private final List<Integer> separatorIndexes = new ArrayList<>();
     private String view;
     private boolean isShowed = false;
 
@@ -85,26 +85,7 @@ public class Menu {
         return representations;
     }
 
-    private List<String> composeActionsRepresentations(){
-        List<String> actionsRepresentations = new ArrayList<>();
-        Object[] keys = this.actions.keySet().toArray();
-        int i = 0;
-        for (Action action : this.actions.values()){
-            actionsRepresentations.add(String.format("%s. %s", keys[i++], action.getDisplayName()));
-        }
-        return actionsRepresentations;
-    }
-    
-    private List<String> composeSettingsRepresentations(){
-        List<String> settingsRepresentations = new ArrayList<>();
-        Object[] keys = this.settings.keySet().toArray();
-        int i = 0;
-        for (Setting setting : this.settings.values()){
-            settingsRepresentations.add(String.format("%s. %s", keys[i++], setting.getRepresentation()));
-        }
-        return settingsRepresentations;
-    }
-
+    @SuppressWarnings("StringConcatenationInLoop")
     private void composeView(){
         List<List<String>> representations = composeRepresentations();
         List<String> actionsRepresentations = representations.get(0);

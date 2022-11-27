@@ -1,11 +1,10 @@
 package jeanarthur.java.WordDictionary;
 
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class Action {
 
-    private String displayName;
+    private final String displayName;
     private Runnable runnable;
     private Consumer<String> consumer;
     private String consumerParam;
