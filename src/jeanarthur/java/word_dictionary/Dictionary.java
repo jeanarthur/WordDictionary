@@ -24,8 +24,10 @@ public class Dictionary {
     private static String currentActionInList;
     
     public static void register(){
-        register(requestNonDuplicateInputConsidering(dictionary[0], String.format("| Digite a palavra (%s): ", Setting.get("primaryLanguage").getCurrentState())),
-                requestNonDuplicateInputConsidering(dictionary[1], String.format("| Digite a palavra (%s): ", Setting.get("primaryLanguage").getCurrentState())));
+        register(
+            requestNonDuplicateInputConsidering(dictionary[0], String.format("| Digite a palavra (%s): ", Setting.get("primaryLanguage").getCurrentState())),
+            requestNonDuplicateInputConsidering(dictionary[1], String.format("| Digite a palavra (%s): ", Setting.get("primaryLanguage").getCurrentState()))
+        );
     }
 
     public static void register(String word1, String word2){

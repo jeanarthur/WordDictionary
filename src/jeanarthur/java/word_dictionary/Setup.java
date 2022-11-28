@@ -54,6 +54,11 @@ public class Setup {
         Dictionary.register("room", "sala");
         Dictionary.register("do", "fazer");
         Dictionary.register("clear", "limpar");
+        Dictionary.register("one", "um");
+        Dictionary.register("two", "dois");
+        Dictionary.register("three", "três");
+        Dictionary.register("four", "quatro");
+        Dictionary.register("five", "5");
     }
     
 }
