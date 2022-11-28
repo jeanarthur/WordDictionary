@@ -142,6 +142,12 @@ public class Dictionary {
         return index;
     }
 
+    public static void registerActionsInList(){
+        Dictionary.actionsInList.put("consult", Dictionary.consultFromList);
+        Dictionary.actionsInList.put("edit", Dictionary.editFromList);
+        Dictionary.actionsInList.put("delete", Dictionary.deleteFromList);
+    }
+
     static void updateList(Consumer<String> actionInList){
         registeredWords = getNotNullValues(dictionary[Setting.get("activeLanguage").getStateValue()]);
         Menu wordList = Menu.get("wordList");
@@ -180,7 +186,15 @@ public class Dictionary {
         generic.add(new Action("Voltar", Menu.exit), "v");
         generic.open();
     }
-    
+
+    public static void start(){
+        registerActionsInList();
+        Menu.currentMenu = Menu.get("instructions");
+        Menu.currentMenu.open();
+        Menu.currentMenu = Menu.get("main");
+        Menu.currentMenu.open();
+    }
+
     static Runnable register = Dictionary::register;
 
     static Runnable search = () -> {

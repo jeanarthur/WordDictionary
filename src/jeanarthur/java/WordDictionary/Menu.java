@@ -21,8 +21,9 @@ public class Menu {
         return menus.get(menuName);
     }
 
-    public static void put(String menuName, Menu menu){
+    public static Menu put(String menuName, Menu menu){
         menus.put(menuName, menu);
+        return menu;
     }
 
     public Menu(String title){
