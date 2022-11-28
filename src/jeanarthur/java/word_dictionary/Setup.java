@@ -17,9 +17,9 @@ public class Setup {
         // Registra o menu de instrução
         Menu instruction = Menu.put("instructions", new Menu("Instrução"));
         instruction.add("""
-                Para interagir com as funções do sistema deve-se
-                digitar o número ou a letra que corresponda a
-                opção/operação desejada.
+                Para interagir com as funções do sistema
+                digite o número ou a letra correspondente
+                a opção/operação desejada.
                 """);
         instruction.addSeparator();
         instruction.add(new Action("Prosseguir", Menu.exit));
