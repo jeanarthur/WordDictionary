@@ -1,15 +1,26 @@
 package jeanarthur.java.WordDictionary;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import static jeanarthur.java.util.InputOperation.requestInput;
 
 public class Setting {
 
+    private static Map<String, Setting> settings = new HashMap<>();
     private final String displayName;
     private String representation;
     private int stateValue = 0;
     private final String[] states;
+
+    public static Setting get(String settingName){
+        return settings.get(settingName);
+    }
+
+    public static void put(String settingName, Setting setting){
+        settings.put(settingName, setting);
+    }
 
     public Setting(String displayName, String... states){
         this.displayName = displayName;

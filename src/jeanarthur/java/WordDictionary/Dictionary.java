@@ -1,5 +1,7 @@
 package jeanarthur.java.WordDictionary;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import static jeanarthur.java.util.ArrayOperation.getFreeSpaceIndex;
@@ -14,7 +16,9 @@ public class Dictionary {
     private static final String[][] dictionary = {wordsPrimaryLanguage, wordsSecondaryLanguage};
     static String[] registeredWords;
     static int wordListIndex = 0;
-
+    public static Map<String, Consumer<String>> actionsInList = new HashMap<>();
+    private static String currentActionInList;
+    
     public static String[][] get(){
         return dictionary;
     }
@@ -23,8 +27,8 @@ public class Dictionary {
         int freeIndex = getFreeSpaceIndex(dictionary[0]);
         try{
             if (freeIndex == -1) { throw Exception.wordLimitReached; }
-            dictionary[0][freeIndex] = requestNonDuplicateInputConsidering(dictionary[0], String.format("| Digite a palavra (%s): ", Main.settings.get("primaryLanguage").getCurrentState()));
-            dictionary[1][freeIndex] = requestNonDuplicateInputConsidering(dictionary[1], String.format("| Digite a palavra (%s): ", Main.settings.get("secondaryLanguage").getCurrentState()));
+            dictionary[0][freeIndex] = requestNonDuplicateInputConsidering(dictionary[0], String.format("| Digite a palavra (%s): ", Setting.get("primaryLanguage").getCurrentState()));
+            dictionary[1][freeIndex] = requestNonDuplicateInputConsidering(dictionary[1], String.format("| Digite a palavra (%s): ", Setting.get("secondaryLanguage").getCurrentState()));
         } catch (RuntimeException runtimeException){
             if (freeIndex != -1) {
                 dictionary[0][freeIndex] = null;
@@ -53,7 +57,7 @@ public class Dictionary {
         try {
             String word = requestInput("| Consultar: ");
             int index = getIndexOf(word);
-            Main.updateConsultedWordMenu(new String[]{dictionary[0][index], dictionary[1][index]});
+            updateConsultedWordMenu(new String[]{dictionary[0][index], dictionary[1][index]});
         } catch (NullPointerException nullPointerException){
             throw Exception.generic(nullPointerException.getMessage());
         } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){
@@ -64,7 +68,7 @@ public class Dictionary {
     public static void consult(String word){
         try {
             int index = getIndexOf(word);
-            Main.updateConsultedWordMenu(new String[]{dictionary[0][index], dictionary[1][index]});
+            updateConsultedWordMenu(new String[]{dictionary[0][index], dictionary[1][index]});
         } catch (NullPointerException nullPointerException){
             throw Exception.generic(nullPointerException.getMessage());
         } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){
@@ -78,7 +82,7 @@ public class Dictionary {
             int index = getIndexOf(word);
             dictionary[0][index] = null;
             dictionary[1][index] = null;
-            Main.updateConsultedWordMenu(new String[]{dictionary[0][index], dictionary[1][index]});
+            updateConsultedWordMenu(new String[]{dictionary[0][index], dictionary[1][index]});
         } catch (NullPointerException nullPointerException){
             throw Exception.generic(nullPointerException.getMessage());
         } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){
@@ -91,7 +95,7 @@ public class Dictionary {
             int index = getIndexOf(word);
             dictionary[0][index] = null;
             dictionary[1][index] = null;
-            Main.updateConsultedWordMenu(new String[]{dictionary[0][index], dictionary[1][index]});
+            updateConsultedWordMenu(new String[]{dictionary[0][index], dictionary[1][index]});
         } catch (NullPointerException nullPointerException){
             throw Exception.generic(nullPointerException.getMessage());
         } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){
@@ -101,11 +105,11 @@ public class Dictionary {
 
     public static void edit(){
         try{
-            String[] activeLanguageWords = dictionary[Main.settings.get("activeLanguage").getStateValue()];
+            String[] activeLanguageWords = dictionary[Setting.get("activeLanguage").getStateValue()];
             String word = requestInput("| Editar: ");
             int index = getIndexOf(word);
-            activeLanguageWords[index] = requestNonDuplicateInputConsidering(activeLanguageWords, String.format("| Alterar '%s'(%s) para: ", activeLanguageWords[index], Main.settings.get("activeLanguage").getCurrentState()));
-            Main.updateConsultedWordMenu(new String[]{dictionary[0][index], dictionary[1][index]});
+            activeLanguageWords[index] = requestNonDuplicateInputConsidering(activeLanguageWords, String.format("| Alterar '%s'(%s) para: ", activeLanguageWords[index], Setting.get("activeLanguage").getCurrentState()));
+            updateConsultedWordMenu(new String[]{dictionary[0][index], dictionary[1][index]});
         } catch (NullPointerException nullPointerException){
             throw Exception.generic(nullPointerException.getMessage());
         } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){
@@ -115,10 +119,10 @@ public class Dictionary {
 
     public static void edit(String word){
         try{
-            String[] activeLanguageWords = dictionary[Main.settings.get("activeLanguage").getStateValue()];
+            String[] activeLanguageWords = dictionary[Setting.get("activeLanguage").getStateValue()];
             int index = getIndexOf(word);
-            activeLanguageWords[index] = requestNonDuplicateInputConsidering(activeLanguageWords, String.format("| Alterar '%s'(%s) para: ", activeLanguageWords[index], Main.settings.get("activeLanguage").getCurrentState()));
-            Main.updateConsultedWordMenu(new String[]{dictionary[0][index], dictionary[1][index]});
+            activeLanguageWords[index] = requestNonDuplicateInputConsidering(activeLanguageWords, String.format("| Alterar '%s'(%s) para: ", activeLanguageWords[index], Setting.get("activeLanguage").getCurrentState()));
+            updateConsultedWordMenu(new String[]{dictionary[0][index], dictionary[1][index]});
         } catch (NullPointerException nullPointerException){
             throw Exception.generic(nullPointerException.getMessage());
         } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){
@@ -128,7 +132,7 @@ public class Dictionary {
 
     private static int getIndexOf(String word){
         int index = -1;
-        String[] activeLanguageWords = dictionary[Main.settings.get("activeLanguage").getStateValue()];
+        String[] activeLanguageWords = dictionary[Setting.get("activeLanguage").getStateValue()];
         for (int i = 0; i < activeLanguageWords.length; i++){
             if (activeLanguageWords[i] != null && activeLanguageWords[i].equals(word)){
                 index = i;
@@ -139,7 +143,7 @@ public class Dictionary {
     }
 
     static void updateList(Consumer<String> actionInList){
-        registeredWords = getNotNullValues(dictionary[Main.settings.get("activeLanguage").getStateValue()]);
+        registeredWords = getNotNullValues(dictionary[Setting.get("activeLanguage").getStateValue()]);
         Menu wordList = Menu.get("wordList");
         wordList.clear();
         int wordCount = 0;
@@ -152,6 +156,30 @@ public class Dictionary {
         if (wordListIndex + 5 < registeredWords.length){ wordList.add(new Action("Próximo", nextInList), "p"); }
         wordList.add(new Action("Voltar", Menu.exit), "v");
     }
+
+    static void updateConsultedWordMenu(String[] words){
+        Menu consulted = Menu.get("consultedWord");
+        consulted.clear();
+        consulted.add(String.format("%s: %s\n", Setting.get("primaryLanguage").getCurrentState(), words[0]));
+        consulted.add(String.format("%s: %s\n", Setting.get("secondaryLanguage").getCurrentState(), words[1]));
+        consulted.addSeparator();
+        consulted.add(new Action("Editar", Dictionary.editFromList, words[Setting.get("activeLanguage").getStateValue()]), "a");
+        consulted.add(new Action("Excluir", Dictionary.deleteFromConsult, words[Setting.get("activeLanguage").getStateValue()]), "b");
+        consulted.add(new Action("Voltar", Menu.exit), "v");
+    }
+
+    static void updateGenericActionMenu(String title, Runnable action){
+        Menu.put("genericAction", new Menu(title));
+        Setting.put("activeLanguage", new Setting("Pesquisar/Listar em", Setting.get("primaryLanguage").getCurrentState(), Setting.get("secondaryLanguage").getCurrentState()));
+        Menu generic = Menu.get("genericAction");
+        generic.add(new Action("Pesquisar", action));
+        generic.add(new Action("Listar", Dictionary.list));
+        generic.addSeparator();
+        generic.add(Setting.get("activeLanguage"));
+        generic.addSeparator();
+        generic.add(new Action("Voltar", Menu.exit), "v");
+        generic.open();
+    }
     
     static Runnable register = Dictionary::register;
 
@@ -161,54 +189,54 @@ public class Dictionary {
     };
 
     static Runnable consult = () -> {
-        Main.currentActionInList = "consult";
-        Main.updateGenericActionMenu("Consultar", search);
+        currentActionInList = "consult";
+        updateGenericActionMenu("Consultar", search);
     };
     
     static Runnable edit = () -> {
-        Main.currentActionInList = "edit";
-        Main.updateGenericActionMenu("Editar", Dictionary::edit);
+        currentActionInList = "edit";
+        updateGenericActionMenu("Editar", Dictionary::edit);
     };
     static Runnable delete = () -> {
-        Main.currentActionInList = "delete";
-        Main.updateGenericActionMenu("Excluir", Dictionary::delete);
+        currentActionInList = "delete";
+        updateGenericActionMenu("Excluir", Dictionary::delete);
     };
 
     static Consumer<String> consultFromList = (String word) -> {
         Dictionary.consult(word);
-        updateList(Main.actionsInList.get(Main.currentActionInList));
+        updateList(actionsInList.get(currentActionInList));
         Menu.get("consultedWord").open();
     };
 
     static Consumer<String> editFromList = (String word) -> {
         Dictionary.edit(word);
-        updateList(Main.actionsInList.get(Main.currentActionInList));
+        updateList(actionsInList.get(currentActionInList));
     };
 
     static Consumer<String> deleteFromList = (String word) -> {
         Dictionary.delete(word);
-        updateList(Main.actionsInList.get(Main.currentActionInList));
+        updateList(actionsInList.get(currentActionInList));
     };
 
     static Consumer<String> deleteFromConsult = (String word) -> {
         Dictionary.delete(word);
-        updateList(Main.actionsInList.get(Main.currentActionInList));
+        updateList(actionsInList.get(currentActionInList));
         Menu.currentMenu.close();
     };
     
     static Runnable list = () -> {
         wordListIndex = 0;
-        updateList(Main.actionsInList.get(Main.currentActionInList));
+        updateList(actionsInList.get(currentActionInList));
         Menu.get("wordList").open();
     };
     
     private static final Runnable nextInList = () -> {
         wordListIndex += (wordListIndex + 5 < registeredWords.length) ? 5 : registeredWords.length - wordListIndex;
-        updateList(Main.actionsInList.get(Main.currentActionInList));
+        updateList(actionsInList.get(currentActionInList));
     };
     
     private static final Runnable previousInList = () -> {
         wordListIndex -= 5;
-        updateList(Main.actionsInList.get(Main.currentActionInList));
+        updateList(actionsInList.get(currentActionInList));
     };
 }
