@@ -2,6 +2,8 @@ package jeanarthur.java.WordDictionary;
 
 import java.util.Objects;
 
+import static jeanarthur.java.util.InputOperation.requestInput;
+
 public class Setting {
 
     private final String displayName;
@@ -56,7 +58,7 @@ public class Setting {
     }
 
     private void changeState(){
-        this.states[this.stateValue] = Main.requestInput("Alterar '" + this.states[0] + "' para: ");
+        this.states[this.stateValue] = requestInput("Alterar '" + this.states[0] + "' para: ");
     }
 
     public String getRepresentation() {

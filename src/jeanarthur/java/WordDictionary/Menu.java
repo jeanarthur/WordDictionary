@@ -2,8 +2,11 @@ package jeanarthur.java.WordDictionary;
 
 import java.util.*;
 
+import static jeanarthur.java.util.InputOperation.requestInput;
+
 public class Menu {
 
+    private static Map<String, Menu> menus = new HashMap<>();
     public static Menu currentMenu;
     private final String title;
     private final Map<String, Action> actions = new HashMap<>();
@@ -13,6 +16,14 @@ public class Menu {
     private final List<Integer> separatorIndexes = new ArrayList<>();
     private String view;
     private boolean isShowed = false;
+
+    public static Menu get(String menuName){
+        return menus.get(menuName);
+    }
+
+    public static void put(String menuName, Menu menu){
+        menus.put(menuName, menu);
+    }
 
     public Menu(String title){
         this.title = title;
@@ -161,7 +172,7 @@ public class Menu {
     }
 
     private void doInputOutputOperation() {
-        String actionCode = Main.requestInput("| Executar ação: ");
+        String actionCode = requestInput("| Executar ação: ");
         doOperation(actionCode);
     }
 
@@ -184,5 +195,7 @@ public class Menu {
     private void print(){
         System.out.println(this.view);
     }
+
+    static Runnable exit = () -> Menu.currentMenu.close();
 
 }
