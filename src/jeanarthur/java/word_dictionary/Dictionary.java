@@ -23,10 +23,6 @@ public class Dictionary {
     public static Map<String, Consumer<String>> actionsInList = new HashMap<>();
     private static String currentActionInList;
     
-    public static String[][] get(){
-        return dictionary;
-    }
-    
     public static void register(){
         int freeIndex = getFreeSpaceIndex(dictionary[0]);
         try{
@@ -84,7 +80,7 @@ public class Dictionary {
         try{
             String word = requestInput("| Excluir: ");
             int index = getIndexOf(word);
-            System.out.print(String.format("| Palavra '%s' -> '%s' foi excluída!", dictionary[0][index], dictionary[1][index]));
+            System.out.printf("| Palavra '%s' -> '%s' foi excluída!", dictionary[0][index], dictionary[1][index]);
             dictionary[0][index] = null;
             dictionary[1][index] = null;
             System.out.println();
@@ -99,7 +95,7 @@ public class Dictionary {
     public static void delete(String word){
         try{
             int index = getIndexOf(word);
-            System.out.println(String.format("| Palavra '%s' -> '%s' foi excluída!", dictionary[0][index], dictionary[1][index]));
+            System.out.printf("| Palavra '%s' -> '%s' foi excluída!\n", dictionary[0][index], dictionary[1][index]);
             dictionary[0][index] = null;
             dictionary[1][index] = null;
             updateConsultedWordMenu(new String[]{dictionary[0][index], dictionary[1][index]});
@@ -196,10 +192,8 @@ public class Dictionary {
 
     public static void start(){
         registerActionsInList();
-        Menu.currentMenu = Menu.get("instructions");
-        Menu.currentMenu.open();
-        Menu.currentMenu = Menu.get("main");
-        Menu.currentMenu.open();
+        Menu.get("instructions").open();
+        Menu.get("main").open();
     }
 
     static Runnable register = Dictionary::register;
