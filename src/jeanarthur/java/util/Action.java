@@ -1,4 +1,4 @@
-package jeanarthur.java.WordDictionary;
+package jeanarthur.java.util;
 
 import java.util.function.Consumer;
 

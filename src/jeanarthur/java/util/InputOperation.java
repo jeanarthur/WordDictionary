@@ -1,6 +1,6 @@
 package jeanarthur.java.util;
 
-import jeanarthur.java.WordDictionary.Exception;
+import jeanarthur.java.word_dictionary.Exception;
 
 import java.util.Arrays;
 import java.util.Scanner;

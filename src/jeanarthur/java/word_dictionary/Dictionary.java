@@ -1,4 +1,8 @@
-package jeanarthur.java.WordDictionary;
+package jeanarthur.java.word_dictionary;
+
+import jeanarthur.java.util.Action;
+import jeanarthur.java.util.Menu;
+import jeanarthur.java.util.Setting;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +45,7 @@ public class Dictionary {
     public static void register(String word1, String word2){
         int freeIndex = getFreeSpaceIndex(dictionary[0]);
         try{
-            if (freeIndex == -1) { throw new RuntimeException("| Não é possível cadastrar.\n| Limite de 100 palavras\n| atingido!"); }
+            if (freeIndex == -1) { throw Exception.wordLimitReached; }
             dictionary[0][freeIndex] = word1;
             dictionary[1][freeIndex] = word2;
         } catch (RuntimeException runtimeException){
@@ -80,8 +84,10 @@ public class Dictionary {
         try{
             String word = requestInput("| Excluir: ");
             int index = getIndexOf(word);
+            System.out.print(String.format("| Palavra '%s' -> '%s' foi excluída!", dictionary[0][index], dictionary[1][index]));
             dictionary[0][index] = null;
             dictionary[1][index] = null;
+            System.out.println();
             updateConsultedWordMenu(new String[]{dictionary[0][index], dictionary[1][index]});
         } catch (NullPointerException nullPointerException){
             throw Exception.generic(nullPointerException.getMessage());
@@ -93,6 +99,7 @@ public class Dictionary {
     public static void delete(String word){
         try{
             int index = getIndexOf(word);
+            System.out.println(String.format("| Palavra '%s' -> '%s' foi excluída!", dictionary[0][index], dictionary[1][index]));
             dictionary[0][index] = null;
             dictionary[1][index] = null;
             updateConsultedWordMenu(new String[]{dictionary[0][index], dictionary[1][index]});

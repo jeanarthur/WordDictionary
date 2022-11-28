@@ -1,4 +1,6 @@
-package jeanarthur.java.WordDictionary;
+package jeanarthur.java.util;
+
+import jeanarthur.java.word_dictionary.Exception;
 
 import java.util.*;
 
@@ -85,7 +87,6 @@ public class Menu {
             } else if (settingKeys.contains(key)){
                 settingsRepresentations.add(String.format("%s. %s", key, this.settings.get(key).getRepresentation()));
             } else {
-                //textRepresentations.addAll(Arrays.asList(this.texts.get(key).split("\\n")));
                 textRepresentations.add(this.texts.get(key));
             }
         }
@@ -197,6 +198,6 @@ public class Menu {
         System.out.println(this.view);
     }
 
-    static Runnable exit = () -> Menu.currentMenu.close();
+    public static Runnable exit = () -> Menu.currentMenu.close();
 
 }
