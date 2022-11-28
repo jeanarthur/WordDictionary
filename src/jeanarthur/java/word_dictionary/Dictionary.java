@@ -25,7 +25,7 @@ public class Dictionary {
     public static void register(){
         register(
             requestNonDuplicateInputConsidering(dictionary[0], String.format("| Digite a palavra (%s): ", Setting.get("primaryLanguage").getCurrentState())),
-            requestNonDuplicateInputConsidering(dictionary[1], String.format("| Digite a palavra (%s): ", Setting.get("primaryLanguage").getCurrentState()))
+            requestNonDuplicateInputConsidering(dictionary[1], String.format("| Digite a palavra (%s): ", Setting.get("secondaryLanguage").getCurrentState()))
         );
     }
 
