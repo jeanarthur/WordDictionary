@@ -24,18 +24,8 @@ public class Dictionary {
     private static String currentActionInList;
     
     public static void register(){
-        int freeIndex = getFreeSpaceIndex(dictionary[0]);
-        try{
-            if (freeIndex == -1) { throw Exception.wordLimitReached; }
-            dictionary[0][freeIndex] = requestNonDuplicateInputConsidering(dictionary[0], String.format("| Digite a palavra (%s): ", Setting.get("primaryLanguage").getCurrentState()));
-            dictionary[1][freeIndex] = requestNonDuplicateInputConsidering(dictionary[1], String.format("| Digite a palavra (%s): ", Setting.get("secondaryLanguage").getCurrentState()));
-        } catch (RuntimeException runtimeException){
-            if (freeIndex != -1) {
-                dictionary[0][freeIndex] = null;
-                dictionary[1][freeIndex] = null;
-            }
-            throw Exception.generic(runtimeException.getMessage());
-        }
+        register(requestNonDuplicateInputConsidering(dictionary[0], String.format("| Digite a palavra (%s): ", Setting.get("primaryLanguage").getCurrentState())),
+                requestNonDuplicateInputConsidering(dictionary[1], String.format("| Digite a palavra (%s): ", Setting.get("primaryLanguage").getCurrentState())));
     }
 
     public static void register(String word1, String word2){
@@ -54,15 +44,7 @@ public class Dictionary {
     }
 
     public static void consult(){
-        try {
-            String word = requestInput("| Consultar: ");
-            int index = getIndexOf(word);
-            updateConsultedWordMenu(new String[]{dictionary[0][index], dictionary[1][index]});
-        } catch (NullPointerException nullPointerException){
-            throw Exception.generic(nullPointerException.getMessage());
-        } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){
-            throw Exception.wordNotFound;
-        }
+        consult(requestInput("| Consultar: "));
     }
 
     public static void consult(String word){
@@ -77,19 +59,7 @@ public class Dictionary {
     }
 
     public static void delete(){
-        try{
-            String word = requestInput("| Excluir: ");
-            int index = getIndexOf(word);
-            System.out.printf("| Palavra '%s' -> '%s' foi excluída!", dictionary[0][index], dictionary[1][index]);
-            dictionary[0][index] = null;
-            dictionary[1][index] = null;
-            System.out.println();
-            updateConsultedWordMenu(new String[]{dictionary[0][index], dictionary[1][index]});
-        } catch (NullPointerException nullPointerException){
-            throw Exception.generic(nullPointerException.getMessage());
-        } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){
-            throw Exception.wordNotFound;
-        }
+        delete(requestInput("| Excluir: "));
     }
 
     public static void delete(String word){
@@ -107,17 +77,7 @@ public class Dictionary {
     }
 
     public static void edit(){
-        try{
-            String[] activeLanguageWords = dictionary[Setting.get("activeLanguage").getStateValue()];
-            String word = requestInput("| Editar: ");
-            int index = getIndexOf(word);
-            activeLanguageWords[index] = requestNonDuplicateInputConsidering(activeLanguageWords, String.format("| Alterar '%s'(%s) para: ", activeLanguageWords[index], Setting.get("activeLanguage").getCurrentState()));
-            updateConsultedWordMenu(new String[]{dictionary[0][index], dictionary[1][index]});
-        } catch (NullPointerException nullPointerException){
-            throw Exception.generic(nullPointerException.getMessage());
-        } catch (ArrayIndexOutOfBoundsException arrayIndexOutOfBoundsException){
-            throw Exception.wordNotFound;
-        }
+        edit(requestInput("| Editar: "));
     }
 
     public static void edit(String word){
