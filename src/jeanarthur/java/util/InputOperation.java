@@ -9,8 +9,11 @@ public class InputOperation {
 
     public static String requestNonDuplicateInputConsidering(String[] array, String consoleMessage){
         String input = requestInput(consoleMessage);
-        boolean isDuplicated = Arrays.toString(array).contains(" " + input) ||
-                Arrays.toString(array).contains("[" + input);
+        String words = Arrays.toString(array);
+        boolean isDuplicated =
+                words.contains(" " + input + ",") ||
+                words.contains("[" + input + ",") ||
+                words.contains(" " + input + "]");
         if (isDuplicated) { throw Exception.wordAlreadyExists; }
         return input;
     }

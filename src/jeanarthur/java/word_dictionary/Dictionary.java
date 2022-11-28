@@ -18,11 +18,10 @@ public class Dictionary {
     private static final String[] wordsPrimaryLanguage = new String[100];
     private static final String[] wordsSecondaryLanguage = new String[100];
     private static final String[][] dictionary = {wordsPrimaryLanguage, wordsSecondaryLanguage};
-    static String[] registeredWords;
     static int wordListIndex = 0;
     public static Map<String, Consumer<String>> actionsInList = new HashMap<>();
     private static String currentActionInList;
-    
+
     public static void register(){
         register(
             requestNonDuplicateInputConsidering(dictionary[0], String.format("| Digite a palavra (%s): ", Setting.get("primaryLanguage").getCurrentState())),
@@ -108,13 +107,13 @@ public class Dictionary {
     }
 
     public static void registerActionsInList(){
-        Dictionary.actionsInList.put("consult", Dictionary.consultFromList);
-        Dictionary.actionsInList.put("edit", Dictionary.editFromList);
-        Dictionary.actionsInList.put("delete", Dictionary.deleteFromList);
+        actionsInList.put("consult", consultFromList);
+        actionsInList.put("edit", editFromList);
+        actionsInList.put("delete", deleteFromList);
     }
 
     static void updateList(Consumer<String> actionInList){
-        registeredWords = getNotNullValues(dictionary[Setting.get("activeLanguage").getStateValue()]);
+        String[] registeredWords = getNotNullValues(dictionary[Setting.get("activeLanguage").getStateValue()]);
         Menu wordList = Menu.get("wordList");
         wordList.clear();
         int wordCount = 0;
@@ -124,7 +123,7 @@ public class Dictionary {
         }
         wordList.addSeparator();
         if (wordListIndex > 0){ wordList.add(new Action("Anterior", previousInList), "a"); }
-        if (wordListIndex + 5 < registeredWords.length){ wordList.add(new Action("Próximo", nextInList), "p"); }
+        if (wordListIndex + 5 < registeredWords.length){ wordList.add(new Action("Próximo", nextInList, registeredWords), "p"); }
         wordList.add(new Action("Voltar", Menu.exit), "v");
     }
 
@@ -207,7 +206,7 @@ public class Dictionary {
         Menu.get("wordList").open();
     };
     
-    private static final Runnable nextInList = () -> {
+    private static final Consumer<String[]> nextInList = (String[] registeredWords) -> {
         wordListIndex += (wordListIndex + 5 < registeredWords.length) ? 5 : registeredWords.length - wordListIndex;
         updateList(actionsInList.get(currentActionInList));
     };

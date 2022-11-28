@@ -7,6 +7,7 @@ import jeanarthur.java.util.Setting;
 public class Setup {
 
     public static void main(String[] args) {
+        registerTestWords();
         setupDictionaryMenus();
         setupDictionarySettings();
         Dictionary.start();
