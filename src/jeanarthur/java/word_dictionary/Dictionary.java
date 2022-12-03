@@ -36,6 +36,7 @@ public class Dictionary {
             dictionary[0][freeIndex] = word1;
             dictionary[1][freeIndex] = word2;
         } catch (RuntimeException runtimeException){
+            if (runtimeException.getMessage().equals(Exception.wordLimitReached.getMessage())){ throw Exception.wordLimitReached; }
             if (freeIndex != -1) {
                 dictionary[0][freeIndex] = null;
                 dictionary[1][freeIndex] = null;

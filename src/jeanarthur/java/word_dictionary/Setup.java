@@ -7,7 +7,6 @@ import jeanarthur.java.util.Setting;
 public class Setup {
 
     public static void main(String[] args) {
-        registerTestWords();
         setupDictionaryMenus();
         setupDictionarySettings();
         Dictionary.start();
@@ -47,19 +46,6 @@ public class Setup {
         Setting.put("primaryLanguage", new Setting("Linguagem Primária","Inglês"));
         Setting.put("secondaryLanguage", new Setting("Linguagem Secundária","Português"));
         Setting.put("activeLanguage", new Setting("Pesquisar/Listar em", Setting.get("primaryLanguage").getCurrentState(), Setting.get("secondaryLanguage").getCurrentState()));
-    }
-
-    public static void registerTestWords(){
-        Dictionary.register("home", "casa");
-        Dictionary.register("ice", "gelo");
-        Dictionary.register("room", "sala");
-        Dictionary.register("do", "fazer");
-        Dictionary.register("clear", "limpar");
-        Dictionary.register("one", "um");
-        Dictionary.register("two", "dois");
-        Dictionary.register("three", "três");
-        Dictionary.register("four", "quatro");
-        Dictionary.register("five", "5");
     }
     
 }
